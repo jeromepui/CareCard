@@ -4,7 +4,6 @@ import {
   Typography,
   TextField,
   Button,
-  CssBaseline,
   AppBar,
   Toolbar,
   IconButton,
@@ -12,7 +11,7 @@ import {
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import Grid from "@mui/material/Grid2";
-import { Auth } from "./Supabase";
+import { Auth } from "./auth";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -26,12 +25,7 @@ function LoginForm() {
   return (
     <>
       <Container component="main" maxWidth={false}>
-        <CssBaseline />
-        <AppBar
-          position="static"
-          color="primary"
-          sx={{ bgcolor: "#00a17b", borderRadius: 2 }}
-        >
+        <AppBar position="static" color="primary" sx={{ borderRadius: 2 }}>
           <Toolbar>
             <IconButton
               edge="start"
@@ -84,9 +78,6 @@ function LoginForm() {
                     "& .MuiInputLabel-root": { color: "#666" }, // label color
                     "& .MuiOutlinedInput-root": {
                       "& fieldset": { borderColor: "#ccc" }, // border color
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#00a17b", // border color when focused
-                      },
                     },
                   }}
                 />
@@ -106,9 +97,6 @@ function LoginForm() {
                     "& .MuiInputLabel-root": { color: "#666" },
                     "& .MuiOutlinedInput-root": {
                       "& fieldset": { borderColor: "#ccc" },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#00a17b", // this changes the border color of password field
-                      },
                     },
                   }}
                 />
@@ -147,7 +135,6 @@ function LoginForm() {
                   sx={{
                     mt: 0,
                     mb: 2,
-                    bgcolor: "#00a17b",
                     textTransform: "none",
                   }}
                 >
