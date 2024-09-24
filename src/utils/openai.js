@@ -42,18 +42,25 @@ export async function updateCareSummary(seniorId) {
 
                 Here are the most recent visits, sorted in ascending order by date.
 
-                ${activitiesPrompt}                
+                <activities>
+                ${activitiesPrompt}
+                </activities>
 
+                <instructions>
                 Step 1: Summarise each visit one by one into the format: {Date}: {Summary of visit}. Then format them into a list.
-                Step 2: Based on the summarised visits, identify any key action items for the care provider to do.
+                Step 2: Based on each summarised visit on each day, identify key action items for the care provider to do so that
+                        they can care for the elderly better.
 
                 Format your response with 'Action items:' followed by a bullet list,
                 then 'Recent visits summary:' followed by another bullet list.
+                </instructions>
 
+                <output>
                 Action items:
                 - [List of action items]
                 Recent visits summary:
                 - [Summary of recent visits]
+                </output>
                 `
 
     try {
