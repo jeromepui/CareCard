@@ -1,12 +1,13 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import { Box, Card, CardActionArea, CardContent, Typography } from '@mui/material'
+import { Box, Card, CardActionArea, CardContent, CircularProgress, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import supabase from '../Supabase'
 import { useAuth } from '../hooks/useAuth'
 
 function HomePage() {
-    const [userName, setUserName] = useState('User')
+    const [username, setUsername] = useState('User')
+    const [loading, setLoading] = useState(true)
     const { user } = useAuth()
 
     useEffect(() => {
@@ -19,20 +20,37 @@ function HomePage() {
                     .single()
 
                 if (data && !error) {
-                    setUserName(data.name)
+                    setUsername(data.name)
                 } else {
                     console.error('Error fetching user data:', error)
                 }
             }
+
+            setLoading(false)
         }
 
         fetchUserName()
     }, [user])
 
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                }}
+            >
+                <CircularProgress />
+            </Box>
+        )
+    }
+
     return (
         <Box sx={{ mt: 4 }}>
             <Typography variant="h4" component="h1" gutterBottom>
-                Welcome, {userName}!
+                Welcome, {username}!
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 4 }}>
                 <Card>
@@ -47,8 +65,7 @@ function HomePage() {
                             <Box>
                                 <Typography variant="h6">Check Resident CareCard</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Check which organisations are catering to your
-                                    beneficiary&apos;s needs
+                                    Check on your beneficiary&apos;s latest care summary and needs
                                 </Typography>
                             </Box>
                             <ArrowForwardIcon />
@@ -56,7 +73,7 @@ function HomePage() {
                     </CardActionArea>
                 </Card>
                 <Card>
-                    <CardActionArea>
+                    <CardActionArea component={Link} to="/visit-history">
                         <CardContent
                             sx={{
                                 display: 'flex',

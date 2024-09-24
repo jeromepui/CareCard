@@ -15,6 +15,7 @@ import HomePage from './pages/HomePage.jsx'
 import LogActivityPage from './pages/LogActivityPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SearchCareCardPage from './pages/SearchCareCardPage.jsx'
+import VisitHistoryPage from './pages/VisitHistoryPage.jsx'
 import theme from './theme'
 
 const router = createBrowserRouter([
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
                     {
                         path: '/search-carecard',
                         element: <SearchCareCardPage />,
+                    },
+                    {
+                        path: '/visit-history',
+                        element: <VisitHistoryPage />,
                     },
                     {
                         path: '/carecard/:id',

@@ -10,6 +10,9 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
+import { DateTimePicker } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import supabase from '../Supabase'
@@ -24,6 +27,7 @@ function LogActivityPage() {
     const [name, setName] = useState('')
     const [organisation, setOrganisation] = useState('')
     const [activityType, setActivityType] = useState('')
+    const [activityDateTime, setActivityDateTime] = useState()
     const [issuesIdentified, setIssuesIdentified] = useState('')
     const [consentGiven, setConsentGiven] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -56,10 +60,10 @@ function LogActivityPage() {
 
         const { error } = await supabase.from('activities').insert([
             {
-                description: activityType,
                 volunteer_id: volunteer_id,
                 senior_id: senior_id,
                 category: activityType,
+                activity_date: activityDateTime.toISOString(),
                 issue: issuesIdentified,
             },
         ])
@@ -136,6 +140,13 @@ function LogActivityPage() {
                             <MenuItem value="Housekeeping">Housekeeping</MenuItem>
                             <MenuItem value="Other">Other</MenuItem>
                         </TextField>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DateTimePicker
+                                label="Date and time of activity"
+                                value={activityDateTime}
+                                onChange={newValue => setActivityDateTime(newValue)}
+                            />
+                        </LocalizationProvider>
                         <TextField
                             margin="normal"
                             fullWidth
