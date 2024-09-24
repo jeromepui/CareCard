@@ -1,6 +1,7 @@
 import { Box, Button, Container, TextField, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import carecardLogo from '../assets/carecard.svg'
 import { useAuth } from '../hooks/useAuth'
 
 function LoginPage() {
@@ -39,10 +40,11 @@ function LoginPage() {
                     flexDirection: 'column',
                 }}
             >
-                <Typography component="h1" variant="h6">
+                <img src={carecardLogo} alt="CareCard Logo" />
+                <Typography component="h1" variant="h6" sx={{ mt: 2 }}>
                     Login to CareCard
                 </Typography>
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                <Box component="form" onSubmit={handleSubmit} noValidate>
                     <TextField
                         margin="normal"
                         required

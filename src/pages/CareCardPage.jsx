@@ -1,3 +1,4 @@
+import AddIcon from '@mui/icons-material/Add'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Box, Button, Card, CardContent, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -66,9 +67,9 @@ function CareCardPage() {
                     <Typography
                         component="pre"
                         sx={{
+                            fontFamily: 'inherit',
                             whiteSpace: 'pre-wrap',
                             wordWrap: 'break-word',
-                            fontFamily: 'inherit',
                         }}
                     >
                         {careSummary || 'No care summary available.'}
@@ -77,11 +78,12 @@ function CareCardPage() {
             </Card>
 
             <Button
+                color="primary"
                 component={Link}
+                startIcon={<AddIcon />}
+                sx={{ mt: 2 }}
                 to={`/log-activity/${id}`}
                 variant="contained"
-                color="primary"
-                sx={{ mt: 2 }}
             >
                 Log Activity
             </Button>
