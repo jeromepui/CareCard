@@ -14,7 +14,7 @@ async function fetchRecentActivities(seniorId) {
         .from('activities')
         .select('*')
         .eq('senior_id', seniorId)
-        .order('created_at', { ascending: false })
+        .order('activity_date', { ascending: false })
         .limit(5)
 
     if (error) {
@@ -33,7 +33,9 @@ export async function updateCareSummary(seniorId) {
     const activitiesPrompt = activities
         .map(
             a =>
-                `- ${a.category}: ${a.issue} (Date: ${new Date(a.created_at).toLocaleDateString()})`
+                `- ${a.category}: ${a.issue} (Date: ${new Date(
+                    a.activity_date
+                ).toLocaleDateString()})`
         )
         .join('\n')
 

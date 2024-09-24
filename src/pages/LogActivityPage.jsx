@@ -13,6 +13,7 @@ import {
 import { DateTimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import supabase from '../Supabase'
@@ -27,7 +28,7 @@ function LogActivityPage() {
     const [name, setName] = useState('')
     const [organisation, setOrganisation] = useState('')
     const [activityType, setActivityType] = useState('')
-    const [activityDateTime, setActivityDateTime] = useState()
+    const [activityDateTime, setActivityDateTime] = useState(dayjs())
     const [issuesIdentified, setIssuesIdentified] = useState('')
     const [consentGiven, setConsentGiven] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -96,7 +97,7 @@ function LogActivityPage() {
                     </Typography>
                 </Box>
             ) : (
-                <Box sx={{ mt: 4, mb: 4 }}>
+                <Box sx={{ mt: 4, mb: 4, overflowY: 'auto' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                         <ArrowBackIcon
                             onClick={() => navigate(-1)}
@@ -145,6 +146,7 @@ function LogActivityPage() {
                                 label="Date and time of activity"
                                 value={activityDateTime}
                                 onChange={newValue => setActivityDateTime(newValue)}
+                                required
                             />
                         </LocalizationProvider>
                         <TextField
