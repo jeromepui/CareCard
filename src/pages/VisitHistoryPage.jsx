@@ -9,7 +9,6 @@ function VisitHistoryPage() {
     const navigate = useNavigate()
     const [visits, setVisits] = useState([])
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
     const { user } = useAuth()
 
     useEffect(() => {
@@ -36,7 +35,7 @@ function VisitHistoryPage() {
 
                     setVisits(data)
                 } catch (err) {
-                    setError(err.message)
+                    console.error(err)
                 } finally {
                     setLoading(false)
                 }
@@ -60,8 +59,6 @@ function VisitHistoryPage() {
             </Box>
         )
     }
-
-    if (error) return <Typography color="error">{error}</Typography>
 
     return (
         <Box sx={{ mt: 4 }}>
@@ -92,7 +89,7 @@ function VisitHistoryPage() {
                     ))}
                 </Grid2>
             ) : (
-                <Typography variant="h6">No visits recorded.</Typography>
+                <Typography variant="h6">No visits logged.</Typography>
             )}
         </Box>
     )
