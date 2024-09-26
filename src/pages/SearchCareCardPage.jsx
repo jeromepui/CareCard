@@ -18,7 +18,7 @@ function SearchCareCardPage() {
         const { data, error } = await supabase
             .from('seniors')
             .select('id')
-            .eq('last_four_char_NRIC', nric)
+            .eq('last_four_char_NRIC', nric.toUpperCase())
             .eq('postal_code', postalCode)
             .single()
 

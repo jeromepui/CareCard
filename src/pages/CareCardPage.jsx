@@ -1,48 +1,85 @@
 import AddIcon from '@mui/icons-material/Add'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { Box, Button, Card, CardContent, Typography } from '@mui/material'
+import { Box, Card, CardContent, CircularProgress, Fab, Tab, Tabs, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import supabase from '../Supabase'
+import { useNavigate, useParams } from 'react-router-dom'
+import { api } from '../services/api'
 
 function CareCardPage() {
     const { id } = useParams()
     const [senior, setSenior] = useState(null)
     const [careSummary, setCareSummary] = useState('')
+    const [recentVisits, setRecentVisits] = useState([])
+    const [organisations, setOrganisations] = useState([])
     const [error, setError] = useState(null)
+    const [activeTab, setActiveTab] = useState(0)
     const navigate = useNavigate()
 
     useEffect(() => {
-        async function fetchSeniorData() {
-            const { data, error } = await supabase.from('seniors').select('*').eq('id', id).single()
+        async function fetchData() {
+            try {
+                const [seniorData, careSummaryData, recentVisitsData, organisationsData] =
+                    await Promise.all([
+                        api.fetchSeniorData(id),
+                        api.fetchCareSummary(id),
+                        api.fetchRecentVisits(id),
+                        api.fetchOrganisations(id),
+                    ])
 
-            if (error) {
-                setError('Error fetching senior data')
-            } else {
-                setSenior(data)
+                setSenior(seniorData)
+                setCareSummary(careSummaryData)
+                setRecentVisits(recentVisitsData)
+                const orgMap = new Map()
+                organisationsData.forEach(item => {
+                    if (item.volunteers && item.volunteers.organisation) {
+                        if (!orgMap.has(item.volunteers.organisation)) {
+                            orgMap.set(item.volunteers.organisation, new Set())
+                        }
+                        orgMap.get(item.volunteers.organisation).add(item.category)
+                    }
+                })
+                const orgList = Array.from(orgMap, ([name, categories]) => ({
+                    name,
+                    categories: Array.from(categories),
+                }))
+                setOrganisations(orgList)
+            } catch (error) {
+                setError('Error fetching data')
+                console.error(error)
             }
         }
-
-        async function fetchCareSummary() {
-            const { data, error } = await supabase
-                .from('care_summary')
-                .select('response')
-                .eq('senior_id', id)
-                .single()
-
-            if (error) {
-                console.error('Error fetching care summary:', error)
-            } else {
-                setCareSummary(data.response)
-            }
-        }
-
-        fetchSeniorData()
-        fetchCareSummary()
+        fetchData()
     }, [id])
 
-    if (error) return <Typography color="error">{error}</Typography>
-    if (!senior) return <Typography>Loading...</Typography>
+    const handleTabChange = (event, newValue) => {
+        setActiveTab(newValue)
+    }
+
+    if (error)
+        return (
+            <Box sx={{ display: 'flex', mt: 4 }}>
+                <ArrowBackIcon
+                    onClick={() => navigate('/search-carecard')}
+                    sx={{ mr: 1, cursor: 'pointer' }}
+                />
+                <Typography color="error">{error}</Typography>
+            </Box>
+        )
+
+    if (!senior) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                }}
+            >
+                <CircularProgress />
+            </Box>
+        )
+    }
 
     return (
         <Box sx={{ mt: 4 }}>
@@ -51,42 +88,98 @@ function CareCardPage() {
                     onClick={() => navigate('/search-carecard')}
                     sx={{ mr: 1, cursor: 'pointer' }}
                 />
-                <Typography variant="h6">{senior.name}&apos;s CareCard</Typography>
+                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                    {senior.name}&apos;s CareCard
+                </Typography>
             </Box>
-            <Card sx={{ backgroundColor: '#00a17b', color: 'white', mb: 2 }}>
-                <CardContent>
-                    <Typography variant="h6">{senior.name}</Typography>
-                    <Typography>NRIC: XXXXX{senior.last_four_char_NRIC}</Typography>
-                    <Typography>Age: {senior.age}</Typography>
-                    <Typography>Prefers {senior.spoken_language.join(', ')}</Typography>
-                </CardContent>
-            </Card>
-            <Card>
-                <CardContent>
-                    <Typography variant="h6">Care Summary</Typography>
-                    <Typography
-                        component="pre"
-                        sx={{
-                            fontFamily: 'inherit',
-                            whiteSpace: 'pre-wrap',
-                            wordWrap: 'break-word',
-                        }}
-                    >
-                        {careSummary || 'No care summary available.'}
-                    </Typography>
-                </CardContent>
-            </Card>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Card sx={{ backgroundColor: '#00a17b', color: 'white', mb: 2, width: '100%' }}>
+                    <CardContent>
+                        <Typography variant="h6">{senior.name}</Typography>
+                        <Typography>NRIC: XXXXX{senior.last_four_char_NRIC}</Typography>
+                        <Typography>Age: {senior.age}</Typography>
+                        <Typography>Prefers {senior.spoken_language.join(', ')}</Typography>
+                    </CardContent>
+                </Card>
 
-            <Button
-                color="primary"
-                component={Link}
-                startIcon={<AddIcon />}
-                sx={{ mt: 2 }}
-                to={`/log-activity/${id}`}
-                variant="contained"
-            >
-                Log Activity
-            </Button>
+                <Box sx={{ width: '100%' }}>
+                    <Tabs value={activeTab} onChange={handleTabChange} variant="scrollable">
+                        <Tab label="Care Summary" />
+                        <Tab label="Recent Visits" />
+                        <Tab label="Organisations" />
+                    </Tabs>
+                </Box>
+
+                {activeTab === 0 && (
+                    <Card sx={{ width: '100%', mt: 2 }}>
+                        <CardContent>
+                            <Typography variant="h6">Care Summary</Typography>
+                            <Typography
+                                component="pre"
+                                sx={{
+                                    fontFamily: 'inherit',
+                                    whiteSpace: 'pre-wrap',
+                                    wordWrap: 'break-word',
+                                }}
+                            >
+                                {careSummary || 'No care summary available.'}
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {activeTab === 1 && (
+                    <Box sx={{ width: '100%', mt: 2 }}>
+                        {recentVisits.length > 0 ? (
+                            recentVisits.map(visit => (
+                                <Card key={visit.id} sx={{ mb: 2 }}>
+                                    <CardContent>
+                                        <Typography variant="h6">
+                                            {new Date(visit.activity_date).toLocaleDateString()}
+                                        </Typography>
+                                        <Typography>Category: {visit.category}</Typography>
+                                        <Typography>Issue: {visit.issue}</Typography>
+                                        <Typography>
+                                            Organisation: {visit.volunteers?.organisation || 'N/A'}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            ))
+                        ) : (
+                            <Typography>No recent visits available.</Typography>
+                        )}
+                    </Box>
+                )}
+
+                {activeTab === 2 && (
+                    <Box sx={{ width: '100%', mt: 2 }}>
+                        {organisations.length > 0 ? (
+                            organisations.map((org, index) => (
+                                <Card key={index} sx={{ mb: 2 }}>
+                                    <CardContent>
+                                        <Typography variant="h6">{org.name}</Typography>
+                                        <Typography>
+                                            Categories: {org.categories.join(', ')}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            ))
+                        ) : (
+                            <Typography>No organisations available.</Typography>
+                        )}
+                    </Box>
+                )}
+
+                <Fab
+                    color="primary"
+                    sx={{ position: 'sticky', bottom: 20, mt: 2 }}
+                    onClick={() => navigate(`/log-activity/${id}`)}
+                    variant="extended"
+                >
+                    <AddIcon sx={{ mr: 1 }} />
+                    Log Activity
+                </Fab>
+            </Box>
         </Box>
     )
 }

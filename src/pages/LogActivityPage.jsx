@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import supabase from '../Supabase'
 import { useAuth } from '../hooks/useAuth'
+import { api } from '../services/api'
 import { updateCareSummary } from '../utils/openai'
 
 function LogActivityPage() {
@@ -34,25 +35,19 @@ function LogActivityPage() {
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
-        async function fetchUserData() {
+        async function fetchData() {
             if (user?.email) {
-                const { data, error } = await supabase
-                    .from('volunteers')
-                    .select('id, name, organisation')
-                    .eq('email', user.email)
-                    .single()
-
-                if (data && !error) {
+                try {
+                    const data = await api.fetchUserData(user.email)
                     setVolunteerId(data.id)
                     setName(data.name)
                     setOrganisation(data.organisation)
-                } else {
+                } catch (error) {
                     console.error('Error fetching user data:', error)
                 }
             }
         }
-
-        fetchUserData()
+        fetchData()
     }, [user])
 
     const handleSubmit = async e => {

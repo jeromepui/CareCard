@@ -28,8 +28,6 @@ async function fetchRecentActivities(seniorId) {
 export async function updateCareSummary(seniorId) {
     const activities = await fetchRecentActivities(seniorId)
 
-    console.log(activities)
-
     const activitiesPrompt = activities
         .map(
             a =>

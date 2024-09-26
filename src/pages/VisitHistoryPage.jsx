@@ -2,8 +2,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Box, Card, CardContent, CircularProgress, Grid2, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import supabase from '../Supabase'
 import { useAuth } from '../hooks/useAuth'
+import { api } from '../services/api'
 
 function VisitHistoryPage() {
     const navigate = useNavigate()
@@ -12,27 +12,10 @@ function VisitHistoryPage() {
     const { user } = useAuth()
 
     useEffect(() => {
-        async function fetchVisits() {
+        async function fetchData() {
             if (user?.email) {
                 try {
-                    const { data: volunteerData, error: volunteerError } = await supabase
-                        .from('volunteers')
-                        .select('id')
-                        .eq('email', user.email)
-                        .single()
-
-                    if (volunteerError) throw volunteerError
-
-                    const { data, error } = await supabase
-                        .from('activities')
-                        .select(
-                            'id, volunteer_id, category, issue, activity_date, seniors (id, name)'
-                        )
-                        .eq('volunteer_id', volunteerData.id)
-                        .order('created_at', { ascending: false })
-
-                    if (error) throw error
-
+                    const data = await api.fetchVisits(user.email)
                     setVisits(data)
                 } catch (err) {
                     console.error(err)
@@ -41,8 +24,7 @@ function VisitHistoryPage() {
                 }
             }
         }
-
-        fetchVisits()
+        fetchData()
     }, [user])
 
     if (loading) {
@@ -70,9 +52,9 @@ function VisitHistoryPage() {
                 <Typography variant="h6">My Visit History</Typography>
             </Box>
             {visits.length > 0 ? (
-                <Grid2 container spacing={2}>
+                <Grid2 container>
                     {visits.map(visit => (
-                        <Grid2 size={12} key={visit.id}>
+                        <Grid2 size={12} key={visit.id} sx={{ mb: 1 }}>
                             <Card>
                                 <CardContent>
                                     <Typography variant="h6">{visit.seniors.name}</Typography>

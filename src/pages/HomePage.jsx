@@ -2,8 +2,8 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { Box, Card, CardActionArea, CardContent, CircularProgress, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import supabase from '../Supabase'
 import { useAuth } from '../hooks/useAuth'
+import { api } from '../services/api'
 
 function HomePage() {
     const [username, setUsername] = useState('User')
@@ -11,25 +11,21 @@ function HomePage() {
     const { user } = useAuth()
 
     useEffect(() => {
-        async function fetchUserName() {
+        async function fetchData() {
             if (user?.email) {
-                const { data, error } = await supabase
-                    .from('volunteers')
-                    .select('name')
-                    .eq('email', user.email)
-                    .single()
-
-                if (data && !error) {
-                    setUsername(data.name)
-                } else {
+                try {
+                    const name = await api.fetchUserName(user.email)
+                    setUsername(name)
+                } catch (error) {
                     console.error('Error fetching user data:', error)
+                } finally {
+                    setLoading(false)
                 }
+            } else {
+                setLoading(false)
             }
-
-            setLoading(false)
         }
-
-        fetchUserName()
+        fetchData()
     }, [user])
 
     if (loading) {
@@ -49,10 +45,8 @@ function HomePage() {
 
     return (
         <Box sx={{ mt: 4 }}>
-            <Typography variant="h4" component="h1" gutterBottom>
-                Welcome, {username}!
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 4 }}>
+            <Typography variant="h4">Welcome, {username}!</Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
                 <Card>
                     <CardActionArea component={Link} to="/search-carecard">
                         <CardContent
