@@ -40,7 +40,7 @@ function LoginPage() {
                     flexDirection: 'column',
                 }}
             >
-                <img src={carecardLogo} alt="CareCard Logo" />
+                <img src={carecardLogo} alt="CareCard Logo" style={{ borderRadius: '16px' }} />
                 <Typography component="h1" variant="h6" sx={{ mt: 2 }}>
                     Login to CareCard
                 </Typography>

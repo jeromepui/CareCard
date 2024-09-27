@@ -1,7 +1,8 @@
 import MenuIcon from '@mui/icons-material/Menu'
-import { AppBar, CircularProgress, Container, IconButton, Toolbar, Typography } from '@mui/material'
+import { AppBar, CircularProgress, Container, IconButton, Toolbar } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import carecardLogo from './assets/carecard.svg'
 import NavigationDrawer from './components/NavigationDrawer'
 import { useAuth } from './hooks/useAuth'
 
@@ -22,7 +23,7 @@ function App() {
 
     useEffect(() => {
         if (loading) {
-            return // Don't do anything while loading
+            return
         }
         if (!user && location.pathname !== '/') {
             navigate('/')
@@ -37,20 +38,15 @@ function App() {
                 <CircularProgress /> // Or any loading indicator
             ) : (
                 <>
-                    <AppBar position="static" color="primary" elevation={0}>
-                        <Toolbar>
-                            <Typography
-                                variant="h6"
-                                component={Link}
-                                to="/home"
-                                sx={{
-                                    flexGrow: 1,
-                                    color: 'white',
-                                    textDecoration: 'none',
-                                }}
-                            >
-                                CareCard
-                            </Typography>
+                    <AppBar position="static" color="primary">
+                        <Toolbar sx={{ justifyContent: 'space-between' }}>
+                            <img
+                                alt="CareCard Logo"
+                                src={carecardLogo}
+                                onClick={() => navigate('/home')}
+                                style={{ borderRadius: '16px', cursor: 'pointer' }}
+                                width="65px"
+                            />
                             {!isLoginPage && user && (
                                 <IconButton
                                     edge="end"

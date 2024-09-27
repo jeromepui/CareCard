@@ -31,16 +31,21 @@ function CareCardPage() {
                 setRecentVisits(recentVisitsData)
                 const orgMap = new Map()
                 organisationsData.forEach(item => {
-                    if (item.volunteers && item.volunteers.organisation) {
-                        if (!orgMap.has(item.volunteers.organisation)) {
-                            orgMap.set(item.volunteers.organisation, new Set())
+                    if (item.volunteers?.organisations) {
+                        const org = item.volunteers.organisations
+                        if (!orgMap.has(org.name)) {
+                            orgMap.set(org.name, {
+                                categories: new Set(),
+                                contact_info: org.contact_info,
+                            })
                         }
-                        orgMap.get(item.volunteers.organisation).add(item.category)
+                        orgMap.get(org.name).categories.add(item.category)
                     }
                 })
-                const orgList = Array.from(orgMap, ([name, categories]) => ({
+                const orgList = Array.from(orgMap, ([name, data]) => ({
                     name,
-                    categories: Array.from(categories),
+                    categories: Array.from(data.categories),
+                    contact_info: data.contact_info,
                 }))
                 setOrganisations(orgList)
             } catch (error) {
@@ -140,7 +145,8 @@ function CareCardPage() {
                                         <Typography>Category: {visit.category}</Typography>
                                         <Typography>Issue: {visit.issue}</Typography>
                                         <Typography>
-                                            Organisation: {visit.volunteers?.organisation || 'N/A'}
+                                            Organisation:{' '}
+                                            {visit.volunteer ? visit.volunteer.organisation : 'N/A'}
                                         </Typography>
                                     </CardContent>
                                 </Card>
@@ -161,6 +167,7 @@ function CareCardPage() {
                                         <Typography>
                                             Categories: {org.categories.join(', ')}
                                         </Typography>
+                                        <Typography>Contact: {org.contact_info}</Typography>
                                     </CardContent>
                                 </Card>
                             ))

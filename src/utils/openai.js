@@ -40,6 +40,8 @@ export async function updateCareSummary(seniorId) {
     const prompt = `Your task is to provide a concise summary of recent activities and action items for
                 the other care providers to take note of when they are visiting the elderly next.
 
+                You are not allowed to provide any form of professional medical advice.
+
                 Here are the most recent visits, sorted in ascending order by date.
 
                 <activities>

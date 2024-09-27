@@ -4,7 +4,6 @@ import {
     Button,
     Checkbox,
     CircularProgress,
-    Container,
     FormControlLabel,
     MenuItem,
     TextField,
@@ -75,7 +74,7 @@ function LogActivityPage() {
     }
 
     return (
-        <Container maxWidth="sm">
+        <Box sx={{ mt: 4 }}>
             {isLoading ? (
                 <Box
                     sx={{
@@ -142,6 +141,7 @@ function LogActivityPage() {
                                 value={activityDateTime}
                                 onChange={newValue => setActivityDateTime(newValue)}
                                 required
+                                sx={{ mt: 2 }}
                             />
                         </LocalizationProvider>
                         <TextField
@@ -179,7 +179,7 @@ function LogActivityPage() {
                     </Box>
                 </Box>
             )}
-        </Container>
+        </Box>
     )
 }
 

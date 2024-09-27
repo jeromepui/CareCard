@@ -26,6 +26,34 @@ export const api = {
         }
     },
 
+    fetchUserData: async email => {
+        const { data, error } = await supabase
+            .from('volunteers')
+            .select(
+                `
+                id,
+                name,
+                email,
+                organisation_id,
+                organisations (
+                    name,
+                    contact_info
+                )
+            `
+            )
+            .eq('email', email)
+            .single()
+        if (error) throw error
+        return {
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            organisation_id: data.organisation_id,
+            organisation: data.organisations?.name || '',
+            organisation_contact: data.organisations?.contact_info || '',
+        }
+    },
+
     async fetchSeniorData(id) {
         const { data, error } = await supabase.from('seniors').select('*').eq('id', id).single()
         if (error) throw error
@@ -45,20 +73,60 @@ export const api = {
     async fetchRecentVisits(id) {
         const { data, error } = await supabase
             .from('activities')
-            .select('*, volunteers(organisation)')
+            .select(
+                `
+        id,
+        category,
+        activity_date,
+        issue,
+        volunteers (
+          id,
+          name,
+          organisations (
+            name
+          )
+        )
+      `
+            )
             .eq('senior_id', id)
             .order('activity_date', { ascending: false })
-            .limit(5)
+            .limit(10)
+
         if (error) throw error
-        return data
+
+        return data.map(visit => ({
+            id: visit.id,
+            category: visit.category,
+            activity_date: visit.activity_date,
+            issue: visit.issue,
+            volunteer: visit.volunteers
+                ? {
+                      id: visit.volunteers.id,
+                      name: visit.volunteers.name,
+                      organisation: visit.volunteers.organisations
+                          ? visit.volunteers.organisations.name
+                          : 'N/A',
+                  }
+                : null,
+        }))
     },
 
     async fetchOrganisations(id) {
         const { data, error } = await supabase
             .from('activities')
-            .select('category, volunteers(organisation)')
+            .select(
+                `
+                category,
+                volunteers (
+                    organisation_id,
+                    organisations (
+                        name,
+                        contact_info
+                    )
+                )
+            `
+            )
             .eq('senior_id', id)
-            .order('activity_date', { ascending: false })
         if (error) throw error
         return data
     },
@@ -71,15 +139,5 @@ export const api = {
             .single()
         if (error) throw error
         return data.name
-    },
-
-    async fetchUserData(userEmail) {
-        const { data, error } = await supabase
-            .from('volunteers')
-            .select('id, name, organisation')
-            .eq('email', userEmail)
-            .single()
-        if (error) throw error
-        return data
     },
 }
