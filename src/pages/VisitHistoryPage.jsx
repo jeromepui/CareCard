@@ -8,7 +8,7 @@ import { api } from '../services/api'
 function VisitHistoryPage() {
     const navigate = useNavigate()
     const [visits, setVisits] = useState([])
-    const [loading, setLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(true)
     const { user } = useAuth()
 
     useEffect(() => {
@@ -20,12 +20,12 @@ function VisitHistoryPage() {
                 console.error(err)
             }
 
-            setLoading(false)
+            setIsLoading(false)
         }
         fetchData()
     }, [user])
 
-    if (loading) {
+    if (isLoading) {
         return (
             <Box
                 sx={{

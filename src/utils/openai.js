@@ -87,6 +87,5 @@ export async function updateCareSummary(seniorId) {
         return summary
     } catch (error) {
         console.error('Error calling OpenAI API:', error)
-        return null
     }
 }

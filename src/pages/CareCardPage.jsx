@@ -12,6 +12,7 @@ function CareCardPage() {
     const [recentVisits, setRecentVisits] = useState([])
     const [organisations, setOrganisations] = useState([])
     const [error, setError] = useState(null)
+    const [isLoading, setIsLoading] = useState(true)
     const [activeTab, setActiveTab] = useState(0)
     const navigate = useNavigate()
 
@@ -55,7 +56,10 @@ function CareCardPage() {
             } catch (error) {
                 setError('Error fetching data: ', error)
             }
+
+            setIsLoading(false)
         }
+
         fetchData()
     }, [id])
 
@@ -74,7 +78,7 @@ function CareCardPage() {
             </Box>
         )
 
-    if (!senior) {
+    if (isLoading) {
         return (
             <Box
                 sx={{
