@@ -13,16 +13,14 @@ function VisitHistoryPage() {
 
     useEffect(() => {
         async function fetchData() {
-            if (user?.email) {
-                try {
-                    const data = await api.fetchVisits(user.email)
-                    setVisits(data)
-                } catch (err) {
-                    console.error(err)
-                } finally {
-                    setLoading(false)
-                }
+            try {
+                const data = await api.fetchVisits(user.email)
+                setVisits(data)
+            } catch (err) {
+                console.error(err)
             }
+
+            setLoading(false)
         }
         fetchData()
     }, [user])

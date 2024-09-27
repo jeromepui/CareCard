@@ -35,17 +35,16 @@ function LogActivityPage() {
 
     useEffect(() => {
         async function fetchData() {
-            if (user?.email) {
-                try {
-                    const data = await api.fetchUserData(user.email)
-                    setVolunteerId(data.id)
-                    setName(data.name)
-                    setOrganisation(data.organisation)
-                } catch (error) {
-                    console.error('Error fetching user data:', error)
-                }
+            try {
+                const data = await api.fetchUserData(user.email)
+                setVolunteerId(data.id)
+                setName(data.name)
+                setOrganisation(data.organisation)
+            } catch (error) {
+                console.error('Error fetching user data:', error)
             }
         }
+
         fetchData()
     }, [user])
 

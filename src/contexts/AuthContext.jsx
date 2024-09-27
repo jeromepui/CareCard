@@ -11,11 +11,12 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         async function getSession() {
             setLoading(true)
+
             const {
                 data: { session },
             } = await supabase.auth.getSession()
+
             setUser(session?.user ?? null)
-            setLoading(false)
 
             const {
                 data: { subscription },
@@ -26,6 +27,9 @@ export function AuthProvider({ children }) {
                     setUser(null)
                 }
             })
+
+            setLoading(false)
+
             return () => subscription.unsubscribe()
         }
 

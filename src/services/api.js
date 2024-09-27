@@ -31,15 +31,15 @@ export const api = {
             .from('volunteers')
             .select(
                 `
-                id,
-                name,
-                email,
-                organisation_id,
-                organisations (
+                    id,
                     name,
-                    contact_info
-                )
-            `
+                    email,
+                    organisation_id,
+                    organisations (
+                        name,
+                        contact_info
+                    )
+                `
             )
             .eq('email', email)
             .single()
@@ -75,18 +75,18 @@ export const api = {
             .from('activities')
             .select(
                 `
-        id,
-        category,
-        activity_date,
-        issue,
-        volunteers (
-          id,
-          name,
-          organisations (
-            name
-          )
-        )
-      `
+                    id,
+                    category,
+                    activity_date,
+                    issue,
+                    volunteers (
+                        id,
+                        name,
+                        organisations (
+                            name
+                        )
+                    )
+                `
             )
             .eq('senior_id', id)
             .order('activity_date', { ascending: false })
@@ -116,15 +116,15 @@ export const api = {
             .from('activities')
             .select(
                 `
-                category,
-                volunteers (
-                    organisation_id,
-                    organisations (
-                        name,
-                        contact_info
+                    category,
+                    volunteers (
+                        organisation_id,
+                        organisations (
+                            name,
+                            contact_info
+                        )
                     )
-                )
-            `
+                `
             )
             .eq('senior_id', id)
         if (error) throw error

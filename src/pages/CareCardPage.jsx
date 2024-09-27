@@ -29,7 +29,9 @@ function CareCardPage() {
                 setSenior(seniorData)
                 setCareSummary(careSummaryData)
                 setRecentVisits(recentVisitsData)
+
                 const orgMap = new Map()
+
                 organisationsData.forEach(item => {
                     if (item.volunteers?.organisations) {
                         const org = item.volunteers.organisations
@@ -42,15 +44,16 @@ function CareCardPage() {
                         orgMap.get(org.name).categories.add(item.category)
                     }
                 })
+
                 const orgList = Array.from(orgMap, ([name, data]) => ({
                     name,
                     categories: Array.from(data.categories),
                     contact_info: data.contact_info,
                 }))
+
                 setOrganisations(orgList)
             } catch (error) {
-                setError('Error fetching data')
-                console.error(error)
+                setError('Error fetching data: ', error)
             }
         }
         fetchData()

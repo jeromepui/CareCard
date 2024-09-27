@@ -12,19 +12,16 @@ function HomePage() {
 
     useEffect(() => {
         async function fetchData() {
-            if (user?.email) {
-                try {
-                    const name = await api.fetchUserName(user.email)
-                    setUsername(name)
-                } catch (error) {
-                    console.error('Error fetching user data:', error)
-                } finally {
-                    setLoading(false)
-                }
-            } else {
-                setLoading(false)
+            try {
+                const name = await api.fetchUserName(user.email)
+                setUsername(name)
+            } catch (error) {
+                console.error('Error fetching user data:', error)
             }
+
+            setLoading(false)
         }
+
         fetchData()
     }, [user])
 
@@ -57,7 +54,7 @@ function HomePage() {
                             }}
                         >
                             <Box>
-                                <Typography variant="h6">Check Resident CareCard</Typography>
+                                <Typography variant="h6">Check Senior CareCard</Typography>
                                 <Typography variant="body2" color="text.secondary">
                                     Check on your beneficiary&apos;s latest care summary and needs
                                 </Typography>
@@ -78,7 +75,7 @@ function HomePage() {
                             <Box>
                                 <Typography variant="h6">My Visit History</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    See your most recently visited households
+                                    See your most recently visited beneficiaries
                                 </Typography>
                             </Box>
                             <ArrowForwardIcon />

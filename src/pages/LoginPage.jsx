@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth'
 function LoginPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
     const { user, signIn } = useAuth()
     const navigate = useNavigate()
 
@@ -18,24 +19,22 @@ function LoginPage() {
 
     const handleSubmit = async e => {
         e.preventDefault()
-        try {
-            const { error } = await signIn({ email, password })
-            if (error) {
-                console.error(error)
-            } else {
-                navigate('/home')
-            }
-        } catch (error) {
-            console.error('Login error:', error.message)
-            // Handle login error (e.g., show error message to user)
+        setError('')
+
+        const { error } = await signIn({ email, password })
+
+        if (error) {
+            setError('Wrong username or password')
+        } else {
+            navigate('/home')
         }
     }
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container maxWidth="xs">
             <Box
                 sx={{
-                    marginTop: 4,
+                    mt: 4,
                     display: 'flex',
                     flexDirection: 'column',
                 }}
@@ -69,9 +68,14 @@ function LoginPage() {
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                     />
-                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 2 }}>
                         Sign In
                     </Button>
+                    {error && (
+                        <Typography color="error" align="center" sx={{ mb: 2 }}>
+                            {error}
+                        </Typography>
+                    )}
                 </Box>
             </Box>
         </Container>

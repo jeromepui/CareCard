@@ -12,18 +12,18 @@ function NavigationDrawer({ isOpen, onClose, onSignOut }) {
     return (
         <Drawer anchor="right" open={isOpen} onClose={onClose}>
             <List>
-                <ListItem component={Link} to="/home" onClick={onClose}>
-                    <ListItemIcon sx={{ cursor: 'pointer' }}>
+                <ListItem component={Link} to="/home" onClick={onClose} sx={{ cursor: 'pointer' }}>
+                    <ListItemIcon>
                         <HomeIcon />
                     </ListItemIcon>
-                    <ListItemText sx={{ cursor: 'pointer' }} primary="Home" />
+                    <ListItemText primary="Home" />
                 </ListItem>
                 <Divider />
-                <ListItem onClick={handleSignOut}>
-                    <ListItemIcon sx={{ cursor: 'pointer' }}>
+                <ListItem onClick={handleSignOut} sx={{ cursor: 'pointer' }}>
+                    <ListItemIcon>
                         <LogoutIcon />
                     </ListItemIcon>
-                    <ListItemText sx={{ cursor: 'pointer' }} primary="Sign Out" />
+                    <ListItemText primary="Sign Out" />
                 </ListItem>
             </List>
         </Drawer>

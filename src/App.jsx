@@ -35,7 +35,7 @@ function App() {
     return (
         <>
             {loading ? (
-                <CircularProgress /> // Or any loading indicator
+                <CircularProgress />
             ) : (
                 <>
                     <AppBar position="static" color="primary">
