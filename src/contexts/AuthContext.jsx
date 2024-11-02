@@ -40,7 +40,13 @@ export function AuthProvider({ children }) {
         signUp: data => supabase.auth.signUp(data),
         signInWithPassword: ({ email, password }) =>
             supabase.auth.signInWithPassword({ email, password }),
-        signInWithOtp: ({ email }) => supabase.auth.signInWithOtp({ email }),
+        signInWithOtp: ({ email }) =>
+            supabase.auth.signInWithOtp({
+                email,
+                options: {
+                    shouldCreateUser: false,
+                },
+            }),
         signOut: () => supabase.auth.signOut(),
         user,
     }
