@@ -21,17 +21,19 @@ import { api } from '../services/api'
 import { updateCareSummary } from '../utils/openai'
 
 function LogActivityPage() {
-    const { id: senior_id } = useParams()
+    const { id: seniorId } = useParams()
     const navigate = useNavigate()
     const { user } = useAuth()
-    const [volunteer_id, setVolunteerId] = useState('')
+    const [volunteerId, setVolunteerId] = useState('')
     const [name, setName] = useState('')
     const [organisation, setOrganisation] = useState('')
-    const [activityType, setActivityType] = useState('')
-    const [activityDateTime, setActivityDateTime] = useState(dayjs())
+    const [category, setCategory] = useState('')
+    const [activityDate, setActivityDate] = useState(dayjs())
     const [issuesIdentified, setIssuesIdentified] = useState('')
+    const [issuesResolved, setIssuesResolved] = useState('')
     const [consentGiven, setConsentGiven] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState(null)
 
     useEffect(() => {
         async function fetchData() {
@@ -41,6 +43,7 @@ function LogActivityPage() {
                 setName(data.name)
                 setOrganisation(data.organisation)
             } catch (error) {
+                setError('Error fetching user data')
                 console.error('Error fetching user data:', error)
             }
         }
@@ -52,22 +55,26 @@ function LogActivityPage() {
         e.preventDefault()
         setIsLoading(true)
 
-        const { error } = await supabase.from('activities').insert([
-            {
-                volunteer_id: volunteer_id,
-                senior_id: senior_id,
-                category: activityType,
-                activity_date: activityDateTime.toISOString(),
-                issue: issuesIdentified,
-            },
-        ])
+        try {
+            const { error: submitError } = await supabase.from('activities').insert([
+                {
+                    volunteer_id: volunteerId,
+                    senior_id: seniorId,
+                    category: category,
+                    activity_date: activityDate.toISOString(),
+                    issue: issuesIdentified,
+                    resolved: issuesResolved,
+                },
+            ])
 
-        if (error) {
-            console.error('Error inserting activity:', error)
-            setIsLoading(false)
-        } else {
-            await updateCareSummary(senior_id)
-            navigate(`/carecard/${senior_id}`, { state: { showToast: true } })
+            if (submitError) throw submitError
+
+            await updateCareSummary(seniorId)
+            navigate(`/carecard/${seniorId}`, { state: { showToast: true } })
+        } catch (err) {
+            setError('Error submitting activity')
+            console.error('Error inserting activity:', err)
+        } finally {
             setIsLoading(false)
         }
     }
@@ -98,6 +105,11 @@ function LogActivityPage() {
                         />
                         <Typography variant="h6">Log Activity</Typography>
                     </Box>
+                    {error && (
+                        <Typography color="error" align="center" sx={{ mb: 2 }}>
+                            {error}
+                        </Typography>
+                    )}
                     <Box component="form" onSubmit={handleSubmit}>
                         <TextField
                             margin="normal"
@@ -121,11 +133,11 @@ function LogActivityPage() {
                             margin="normal"
                             required
                             fullWidth
-                            id="activityType"
+                            id="category"
                             select
                             label="Type of activity"
-                            value={activityType}
-                            onChange={e => setActivityType(e.target.value)}
+                            value={category}
+                            onChange={e => setCategory(e.target.value)}
                         >
                             <MenuItem value="Befriending/Welfare check">
                                 Befriending/Welfare check
@@ -137,8 +149,8 @@ function LogActivityPage() {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DateTimePicker
                                 label="Date and time of activity"
-                                value={activityDateTime}
-                                onChange={newValue => setActivityDateTime(newValue)}
+                                value={activityDate}
+                                onChange={newValue => setActivityDate(newValue)}
                                 required
                                 sx={{ mt: 2 }}
                             />
@@ -154,6 +166,18 @@ function LogActivityPage() {
                             value={issuesIdentified}
                             onChange={e => setIssuesIdentified(e.target.value)}
                             helperText="(Optional) Comment on whether the resident requires additional support, e.g. housekeeping, meal delivery etc."
+                        />
+                        <TextField
+                            margin="normal"
+                            fullWidth
+                            id="issuesResolved"
+                            label="Issues resolved"
+                            name="issuesResolved"
+                            multiline
+                            rows={10}
+                            value={issuesResolved}
+                            onChange={e => setIssuesResolved(e.target.value)}
+                            helperText="(Optional) Comment on whether you resolved any issues or completed any action items mentioned in the care summary."
                         />
                         <FormControlLabel
                             control={

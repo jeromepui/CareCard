@@ -1,7 +1,8 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { Box, Card, CardContent, CircularProgress, Grid2, Typography } from '@mui/material'
+import { Box, Card, CardContent, Grid2, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import LoadingSpinner from '../components/LoadingSpinner'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../services/api'
 
@@ -9,6 +10,7 @@ function VisitHistoryPage() {
     const navigate = useNavigate()
     const [visits, setVisits] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState(null)
     const { user } = useAuth()
 
     useEffect(() => {
@@ -17,26 +19,24 @@ function VisitHistoryPage() {
                 const data = await api.fetchVisits(user.email)
                 setVisits(data)
             } catch (err) {
-                console.error(err)
+                setError('Error fetching visit history')
+                console.error('Error fetching visits:', err)
+            } finally {
+                setIsLoading(false)
             }
-
-            setIsLoading(false)
         }
         fetchData()
     }, [user])
 
     if (isLoading) {
+        return <LoadingSpinner />
+    }
+
+    if (error) {
         return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh',
-                }}
-            >
-                <CircularProgress />
-            </Box>
+            <Typography color="error" align="center" sx={{ mt: 4 }}>
+                {error}
+            </Typography>
         )
     }
 

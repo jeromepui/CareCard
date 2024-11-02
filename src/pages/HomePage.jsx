@@ -1,13 +1,15 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import { Box, Card, CardActionArea, CardContent, CircularProgress, Typography } from '@mui/material'
+import { Box, Card, CardActionArea, CardContent, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import LoadingSpinner from '../components/LoadingSpinner'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../services/api'
 
 function HomePage() {
     const [username, setUsername] = useState('User')
-    const [loading, setLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState(null)
     const { user } = useAuth()
 
     useEffect(() => {
@@ -16,27 +18,25 @@ function HomePage() {
                 const name = await api.fetchUserName(user.email)
                 setUsername(name)
             } catch (error) {
+                setError('Error fetching user data')
                 console.error('Error fetching user data:', error)
+            } finally {
+                setIsLoading(false)
             }
-
-            setLoading(false)
         }
 
         fetchData()
     }, [user])
 
-    if (loading) {
+    if (isLoading) {
+        return <LoadingSpinner />
+    }
+
+    if (error) {
         return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh',
-                }}
-            >
-                <CircularProgress />
-            </Box>
+            <Typography color="error" align="center" sx={{ mt: 4 }}>
+                {error}
+            </Typography>
         )
     }
 

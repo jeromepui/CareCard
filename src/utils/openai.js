@@ -27,43 +27,63 @@ async function fetchRecentActivities(seniorId) {
 
 export async function updateCareSummary(seniorId) {
     const activities = await fetchRecentActivities(seniorId)
+    const sortedActivities = [...activities].reverse()
 
-    const activitiesPrompt = activities
+    const issuesIdentifiedPrompt = sortedActivities
         .map(
             a =>
-                `- ${a.category}: ${a.issue} (Date: ${new Date(
-                    a.activity_date
-                ).toLocaleDateString()})`
+                `- ${new Date(a.activity_date).toLocaleDateString()} (${a.category}): ${
+                    a.issue ? a.issue : 'No issues identified'
+                }`
         )
         .join('\n')
 
-    const prompt = `Your task is to provide a concise summary of recent activities and action items for
-                the other care providers to take note of when they are visiting the elderly next.
+    const issuesResolvedPrompt = sortedActivities
+        .map(
+            a =>
+                `- ${new Date(a.activity_date).toLocaleDateString()} (${a.category}): ${
+                    a.resolved ? a.resolved : 'No issues resolved'
+                }`
+        )
+        .join('\n')
 
-                You are not allowed to provide any form of professional medical advice.
+    const prompt = `Analyze care visit records and create a care summary.
 
-                Here are the most recent visits, sorted in ascending order by date.
+                VISIT RECORDS (oldest to newest):
+                Issues identified:
+                ${issuesIdentifiedPrompt}
 
-                <activities>
-                ${activitiesPrompt}
-                </activities>
+                Issues resolved:
+                ${issuesResolvedPrompt}
 
-                <instructions>
-                Step 1: Summarise each visit one by one into the format: {Date}: {Summary of visit}. Then format them into a list.
-                Step 2: Based on each summarised visit on each day, identify key action items for the care provider to do so that
-                        they can care for the elderly better.
+                TASK 1 - SUMMARIZE VISITS:
+                For each visit date, write:
+                "Issues identified: [findings/None]. Issues resolved: [resolutions/None]."
 
-                Format your response with 'Action items:' followed by a bullet list,
-                then 'Recent visits summary:' followed by another bullet list.
-                </instructions>
+                TASK 2 - CREATE ACTION ITEMS:
+                1. List all identified issues
+                2. Remove any issues that were later resolved (including related issues)
+                3. Convert remaining issues into clear instructions
 
-                <output>
-                Action items:
-                - [List of action items]
+                Example output:
                 Recent visits summary:
-                - [Summary of recent visits]
-                </output>
-                `
+                - 1/1/24: Issues identified: Needs walker for mobility. Issues resolved: None.
+                - 1/5/24: Issues identified: None. Issues resolved: Provided walker, mobility improved.
+                - 1/8/24: Issues identified: Feeling lonely. Issues resolved: None.
+
+                Action items:
+                - Connect resident with social activities to address loneliness
+
+                Note: "Needs walker" was removed from action items as it was resolved on 1/5.
+
+                YOUR RESPONSE MUST FOLLOW THIS FORMAT:
+                Recent visits summary:
+                - [Date]: Issues identified: [findings/None]. Issues resolved: [resolutions/None].
+
+                Action items:
+                - [Instructions for unresolved issues]
+                OR
+                - No outstanding action items`
 
     try {
         const completion = await openAIClient.chat.completions.create({

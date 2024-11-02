@@ -1,12 +1,13 @@
 import AddIcon from '@mui/icons-material/Add'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { Box, Card, CardContent, CircularProgress, Fab, Tab, Tabs, Typography } from '@mui/material'
+import { Box, Card, CardContent, Fab, Tab, Tabs, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import LoadingSpinner from '../components/LoadingSpinner'
 import { api } from '../services/api'
 
 function CareCardPage() {
-    const { id } = useParams()
+    const { id: seniorId } = useParams()
     const [senior, setSenior] = useState(null)
     const [careSummary, setCareSummary] = useState('')
     const [recentVisits, setRecentVisits] = useState([])
@@ -21,10 +22,10 @@ function CareCardPage() {
             try {
                 const [seniorData, careSummaryData, recentVisitsData, organisationsData] =
                     await Promise.all([
-                        api.fetchSeniorData(id),
-                        api.fetchCareSummary(id),
-                        api.fetchRecentVisits(id),
-                        api.fetchOrganisations(id),
+                        api.fetchSeniorData(seniorId),
+                        api.fetchCareSummary(seniorId),
+                        api.fetchRecentVisits(seniorId),
+                        api.fetchOrganisations(seniorId),
                     ])
 
                 setSenior(seniorData)
@@ -54,14 +55,15 @@ function CareCardPage() {
 
                 setOrganisations(orgList)
             } catch (error) {
-                setError('Error fetching data: ', error)
+                setError('Error fetching data')
+                console.error('Error fetching data:', error)
+            } finally {
+                setIsLoading(false)
             }
-
-            setIsLoading(false)
         }
 
         fetchData()
-    }, [id])
+    }, [seniorId])
 
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue)
@@ -79,18 +81,7 @@ function CareCardPage() {
         )
 
     if (isLoading) {
-        return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh',
-                }}
-            >
-                <CircularProgress />
-            </Box>
-        )
+        return <LoadingSpinner />
     }
 
     return (
@@ -187,7 +178,7 @@ function CareCardPage() {
                 <Fab
                     color="primary"
                     sx={{ position: 'sticky', bottom: 20, mt: 2 }}
-                    onClick={() => navigate(`/log-activity/${id}`)}
+                    onClick={() => navigate(`/log-activity/${seniorId}`)}
                     variant="extended"
                 >
                     <AddIcon sx={{ mr: 1 }} />

@@ -1,8 +1,9 @@
 import MenuIcon from '@mui/icons-material/Menu'
-import { AppBar, CircularProgress, Container, IconButton, Toolbar } from '@mui/material'
+import { AppBar, Container, IconButton, Toolbar } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import carecardLogo from './assets/carecard.svg'
+import LoadingSpinner from './components/LoadingSpinner'
 import NavigationDrawer from './components/NavigationDrawer'
 import { useAuth } from './hooks/useAuth'
 
@@ -35,7 +36,7 @@ function App() {
     return (
         <>
             {loading ? (
-                <CircularProgress />
+                <LoadingSpinner />
             ) : (
                 <>
                     <AppBar position="static" color="primary">
