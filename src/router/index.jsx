@@ -8,6 +8,7 @@ import LogActivityPage from '../pages/LogActivityPage'
 import LoginPage from '../pages/LoginPage'
 import SearchCareCardPage from '../pages/SearchCareCardPage'
 import VisitHistoryPage from '../pages/VisitHistoryPage'
+import SignupPage from '../pages/SignupPage'
 
 const router = createBrowserRouter([
     {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <LoginPage />,
+            },
+            {
+                path: ROUTES.SIGNUP,
+                element: <SignupPage />,
             },
             {
                 element: <ProtectedRoute />,

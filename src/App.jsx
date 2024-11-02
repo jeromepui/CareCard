@@ -1,10 +1,11 @@
 import MenuIcon from '@mui/icons-material/Menu'
 import { AppBar, Container, IconButton, Toolbar } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import carecardLogo from './assets/carecard.svg'
 import LoadingSpinner from './components/LoadingSpinner'
 import NavigationDrawer from './components/NavigationDrawer'
+import { ROUTES } from './constants'
 import { useAuth } from './hooks/useAuth'
 
 function App() {
@@ -22,16 +23,20 @@ function App() {
         navigate('/')
     }
 
+    const isPublicRoute = useCallback(() => {
+        return location.pathname === ROUTES.LOGIN || location.pathname === ROUTES.SIGNUP
+    }, [location.pathname])
+
     useEffect(() => {
         if (loading) {
             return
         }
-        if (!user && location.pathname !== '/') {
+        if (!user && !isPublicRoute()) {
             navigate('/')
         }
-    }, [user, loading, location.pathname, navigate])
+    }, [user, loading, location.pathname, navigate, isPublicRoute])
 
-    const isLoginPage = location.pathname === '/'
+    const isLoginPage = isPublicRoute()
 
     return (
         <>

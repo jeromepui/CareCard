@@ -38,7 +38,9 @@ export function AuthProvider({ children }) {
 
     const value = {
         signUp: data => supabase.auth.signUp(data),
-        signIn: ({ email }) => supabase.auth.signInWithOtp({ email }),
+        signInWithPassword: ({ email, password }) =>
+            supabase.auth.signInWithPassword({ email, password }),
+        signInWithOtp: ({ email }) => supabase.auth.signInWithOtp({ email }),
         signOut: () => supabase.auth.signOut(),
         user,
     }

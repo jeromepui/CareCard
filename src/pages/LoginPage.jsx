@@ -6,10 +6,12 @@ import { useAuth } from '../hooks/useAuth'
 
 function LoginPage() {
     const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [emailSent, setEmailSent] = useState(false)
     const [error, setError] = useState('')
-    const { user, signIn } = useAuth()
+    const [loginMethod, setLoginMethod] = useState('password') // 'password' or 'magic'
+    const { user, signInWithPassword, signInWithOtp } = useAuth()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -24,17 +26,21 @@ function LoginPage() {
         setIsSubmitting(true)
 
         try {
-            const { error } = await signIn({ email })
+            let error
+            if (loginMethod === 'password') {
+                const { error: signInError } = await signInWithPassword({ email, password })
+                error = signInError
+            } else {
+                const { error: otpError } = await signInWithOtp({ email })
+                error = otpError
+                if (!error) {
+                    setEmailSent(true)
+                }
+            }
 
             if (error) {
-                if (error.message) {
-                    setError(error.message)
-                } else {
-                    setError('Failed to send magic link. Please try again.')
-                }
+                setError(error.message || 'Authentication failed. Please try again.')
                 console.error('Auth error:', error)
-            } else {
-                setEmailSent(true)
             }
         } catch (err) {
             console.error('Unexpected error:', err)
@@ -46,13 +52,7 @@ function LoginPage() {
 
     return (
         <Container maxWidth="xs">
-            <Box
-                sx={{
-                    mt: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}
-            >
+            <Box sx={{ mt: 4, display: 'flex', flexDirection: 'column' }}>
                 <img src={carecardLogo} alt="CareCard Logo" style={{ borderRadius: '16px' }} />
 
                 {emailSent ? (
@@ -86,6 +86,21 @@ function LoginPage() {
                                 onChange={e => setEmail(e.target.value)}
                                 disabled={isSubmitting}
                             />
+                            {loginMethod === 'password' && (
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="current-password"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    disabled={isSubmitting}
+                                />
+                            )}
                             <Button
                                 type="submit"
                                 fullWidth
@@ -93,13 +108,37 @@ function LoginPage() {
                                 sx={{ mt: 2, mb: 2 }}
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? 'Sending...' : 'Send Magic Link'}
+                                {isSubmitting
+                                    ? 'Signing in...'
+                                    : loginMethod === 'password'
+                                    ? 'Sign In'
+                                    : 'Send Magic Link'}
+                            </Button>
+                            <Button
+                                fullWidth
+                                onClick={() =>
+                                    setLoginMethod(prev =>
+                                        prev === 'password' ? 'magic' : 'password'
+                                    )
+                                }
+                                sx={{ mb: 2 }}
+                            >
+                                {loginMethod === 'password'
+                                    ? 'Sign in with Magic Link'
+                                    : 'Sign in with Password'}
                             </Button>
                             {error && (
                                 <Typography color="error" align="center" sx={{ mb: 2 }}>
                                     {error}
                                 </Typography>
                             )}
+                            <Button
+                                fullWidth
+                                onClick={() => navigate('/signup')}
+                                sx={{ textTransform: 'none' }}
+                            >
+                                Don&apos;t have an account? Sign up
+                            </Button>
                         </Box>
                     </>
                 )}

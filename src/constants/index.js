@@ -8,6 +8,7 @@ export const ACTIVITY_TYPES = {
 export const ROUTES = {
     HOME: '/home',
     LOGIN: '/',
+    SIGNUP: '/signup',
     SEARCH: '/search-carecard',
     VISIT_HISTORY: '/visit-history',
     CARECARD: '/carecard/:id',
