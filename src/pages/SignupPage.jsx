@@ -9,6 +9,7 @@ function SignupPage() {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState('')
     const { signUp } = useAuth()
@@ -17,6 +18,12 @@ function SignupPage() {
     const handleSubmit = async e => {
         e.preventDefault()
         setError('')
+        
+        if (password !== confirmPassword) {
+            setError('Passwords do not match')
+            return
+        }
+        
         setIsSubmitting(true)
 
         try {
@@ -102,12 +109,25 @@ function SignupPage() {
                         onChange={e => setPassword(e.target.value)}
                         disabled={isSubmitting}
                     />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="confirmPassword"
+                        label="Confirm Password"
+                        type="password"
+                        id="confirmPassword"
+                        autoComplete="new-password"
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        disabled={isSubmitting}
+                    />
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
                         sx={{ mt: 2, mb: 2 }}
-                        disabled={isSubmitting || !name || !email || !password}
+                        disabled={isSubmitting || !name || !email || !password || !confirmPassword}
                     >
                         {isSubmitting ? 'Signing up...' : 'Sign Up'}
                     </Button>
