@@ -18,7 +18,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import supabase from '../Supabase'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../services/api'
-import { updateCareSummary } from '../utils/openai'
 
 function LogActivityPage() {
     const { id: seniorId } = useParams()
@@ -69,7 +68,12 @@ function LogActivityPage() {
 
             if (submitError) throw submitError
 
-            await updateCareSummary(seniorId)
+            const { data, error: functionError } = await supabase.functions.invoke('openai', {
+                body: { senior_id: seniorId },
+            })
+            
+            if (functionError) throw functionError
+
             navigate(`/carecard/${seniorId}`, { state: { showToast: true } })
         } catch (err) {
             setError('Error submitting activity')
