@@ -140,4 +140,18 @@ export const api = {
         if (error) throw error
         return data.name
     },
+
+    async updateCareSummary(seniorId, summary) {
+        const { data, error } = await supabase
+            .from('care_summary')
+            .update({ 
+                response: summary,
+                updated_at: new Date().toISOString()
+            })
+            .eq('senior_id', seniorId)
+            .select()
+
+        if (error) throw error
+        return data
+    },
 }

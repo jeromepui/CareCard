@@ -1,6 +1,7 @@
 import AddIcon from '@mui/icons-material/Add'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { Box, Card, CardContent, Fab, Tab, Tabs, Typography } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit'
+import { Box, Card, CardContent, Fab, Tab, Tabs, Typography, IconButton, TextField, Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -15,6 +16,8 @@ function CareCardPage() {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [activeTab, setActiveTab] = useState(0)
+    const [isEditing, setIsEditing] = useState(false)
+    const [tempCareSummary, setTempCareSummary] = useState('')
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -116,17 +119,69 @@ function CareCardPage() {
                 {activeTab === 0 && (
                     <Card sx={{ width: '100%', mt: 2 }}>
                         <CardContent>
-                            <Typography variant="h6">Care Summary</Typography>
-                            <Typography
-                                component="pre"
-                                sx={{
-                                    fontFamily: 'inherit',
-                                    whiteSpace: 'pre-wrap',
-                                    wordWrap: 'break-word',
-                                }}
-                            >
-                                {careSummary || 'No care summary available.'}
-                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Typography variant="h6">Care Summary</Typography>
+                                <Button
+                                    startIcon={<EditIcon />}
+                                    onClick={() => {
+                                        setIsEditing(!isEditing)
+                                        setTempCareSummary(careSummary)
+                                    }}
+                                >
+                                    Edit
+                                </Button>
+                            </Box>
+                            {isEditing ? (
+                                <TextField
+                                    fullWidth
+                                    multiline
+                                    minRows={4}
+                                    value={tempCareSummary}
+                                    onChange={(e) => setTempCareSummary(e.target.value)}
+                                    sx={{ mt: 2 }}
+                                />
+                            ) : (
+                                <Typography
+                                    component="pre"
+                                    sx={{
+                                        fontFamily: 'inherit',
+                                        whiteSpace: 'pre-wrap',
+                                        wordWrap: 'break-word',
+                                    }}
+                                >
+                                    {careSummary || 'No care summary available.'}
+                                </Typography>
+                            )}
+                            {isEditing && (
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={async () => {
+                                            try {
+                                                await api.updateCareSummary(seniorId, tempCareSummary)
+                                                setCareSummary(tempCareSummary)
+                                                setIsEditing(false)
+                                            } catch (error) {
+                                                console.error('Error updating care summary:', error)
+                                                setError('Error updating care summary')
+                                            }
+                                        }}
+                                    >
+                                        Save
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="secondary"
+                                        onClick={() => {
+                                            setIsEditing(false)
+                                            setTempCareSummary('')
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </Box>
+                            )}
                         </CardContent>
                     </Card>
                 )}
