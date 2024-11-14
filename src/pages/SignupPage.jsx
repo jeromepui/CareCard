@@ -12,12 +12,14 @@ function SignupPage() {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState('')
+    const [successMessage, setSuccessMessage] = useState('')
     const { signUp } = useAuth()
     const navigate = useNavigate()
 
     const handleSubmit = async e => {
         e.preventDefault()
         setError('')
+        setSuccessMessage('')
         
         if (password !== confirmPassword) {
             setError('Passwords do not match')
@@ -50,11 +52,7 @@ function SignupPage() {
 
             if (dbError) throw dbError
 
-            navigate('/', {
-                state: {
-                    message: 'Please check your email to confirm your account.',
-                },
-            })
+            setSuccessMessage('A confirmation link has been sent to your email. Please check your inbox to complete your signup.')
         } catch (err) {
             console.error('Signup error:', err)
             setError(err.message || 'Failed to sign up. Please try again.')
@@ -131,6 +129,11 @@ function SignupPage() {
                     >
                         {isSubmitting ? 'Signing up...' : 'Sign Up'}
                     </Button>
+                    {successMessage && (
+                        <Typography color="success.main" align="center" sx={{ mb: 2 }}>
+                            {successMessage}
+                        </Typography>
+                    )}
                     {error && (
                         <Typography color="error" align="center" sx={{ mb: 2 }}>
                             {error}
