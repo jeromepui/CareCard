@@ -6,6 +6,7 @@ import supabase from '../Supabase'
 
 function SearchCareCardPage() {
     const [nric, setNric] = useState('')
+    const [name, setName] = useState('')
     const [postalCode, setPostalCode] = useState('')
     const [consent, setConsent] = useState(false)
     const [error, setError] = useState('')
@@ -15,14 +16,23 @@ function SearchCareCardPage() {
         e.preventDefault()
         setError('')
 
-        const { data, error } = await supabase
+        const filledFields = [name, nric, postalCode].filter(field => field.trim() !== '').length
+        if (filledFields < 2) {
+            setError('Please fill at least 2 fields')
+            return
+        }
+
+        let query = supabase
             .from('seniors')
             .select('id')
-            .eq('last_four_char_NRIC', nric.toUpperCase())
-            .eq('postal_code', postalCode)
-            .single()
 
-        if (error) {
+        if (nric) query = query.eq('last_four_char_NRIC', nric.toUpperCase())
+        if (postalCode) query = query.eq('postal_code', postalCode)
+        if (name) query = query.ilike('name', `%${name}%`)
+
+        const { data, error: searchError } = await query.single()
+
+        if (searchError) {
             setError('No senior record found')
         } else if (data) {
             navigate(`/carecard/${data.id}`)
@@ -41,11 +51,19 @@ function SearchCareCardPage() {
             <Box component="form" onSubmit={handleSubmit}>
                 <TextField
                     fullWidth
+                    label="Name"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    margin="normal"
+                    required={!nric || !postalCode}
+                />
+                <TextField
+                    fullWidth
                     label="Last 4 characters of NRIC"
                     value={nric}
                     onChange={e => setNric(e.target.value)}
                     margin="normal"
-                    required
+                    required={!name || !postalCode}
                 />
                 <TextField
                     fullWidth
@@ -53,7 +71,7 @@ function SearchCareCardPage() {
                     value={postalCode}
                     onChange={e => setPostalCode(e.target.value)}
                     margin="normal"
-                    required
+                    required={!name || !nric}
                 />
                 <FormControlLabel
                     control={
