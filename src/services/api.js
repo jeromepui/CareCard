@@ -13,7 +13,16 @@ export const api = {
 
             const { data, error } = await supabase
                 .from('activities')
-                .select('id, volunteer_id, category, issue, activity_date, seniors (id, name)')
+                .select(`
+                    id, 
+                    volunteer_id, 
+                    category, 
+                    issue, 
+                    resolved, 
+                    activity_date, 
+                    created_at,
+                    seniors (id, name)
+                `)
                 .eq('volunteer_id', volunteerData.id)
                 .order('created_at', { ascending: false })
 
@@ -154,4 +163,28 @@ export const api = {
         if (error) throw error
         return data
     },
+
+    async updateVisit(visitId, updateData) {
+        const { data, error } = await supabase
+            .from('activities')
+            .update({
+                issue: updateData.issue,
+                resolved: updateData.resolved_issues
+            })
+            .eq('id', visitId)
+            .select()
+
+        if (error) throw error
+        return data
+    },
+
+    async deleteVisit(visitId) {
+        const { error } = await supabase
+            .from('activities')
+            .delete()
+            .eq('id', visitId)
+
+        if (error) throw error
+        return { success: true }
+    }
 }

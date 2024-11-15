@@ -102,7 +102,6 @@ function CareCardPage() {
                 <Card sx={{ backgroundColor: '#00a17b', color: 'white', mb: 2, width: '100%' }}>
                     <CardContent>
                         <Typography variant="h6">{senior.name}</Typography>
-                        <Typography>NRIC: XXXXX{senior.last_four_char_NRIC}</Typography>
                         <Typography>Age: {senior.age}</Typography>
                         <Typography>Prefers {senior.spoken_language.join(', ')}</Typography>
                     </CardContent>
