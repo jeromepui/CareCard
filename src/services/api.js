@@ -168,8 +168,10 @@ export const api = {
         const { data, error } = await supabase
             .from('activities')
             .update({
+                category: updateData.category,
+                activity_date: updateData.activity_date,
                 issue: updateData.issue,
-                resolved: updateData.resolved_issues
+                resolved: updateData.resolved
             })
             .eq('id', visitId)
             .select()

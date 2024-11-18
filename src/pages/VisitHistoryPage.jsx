@@ -1,5 +1,5 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { Box, Card, CardContent, Grid2, Typography, Pagination, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton } from '@mui/material'
+import { Box, Card, CardContent, Grid2, Typography, Pagination, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, MenuItem } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -7,6 +7,10 @@ import { useAuth } from '../hooks/useAuth'
 import { api } from '../services/api'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { DateTimePicker } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import dayjs from 'dayjs'
 
 function VisitHistoryPage() {
     const navigate = useNavigate()
@@ -20,6 +24,7 @@ function VisitHistoryPage() {
     const [selectedVisit, setSelectedVisit] = useState(null)
     const [editFormData, setEditFormData] = useState({
         category: '',
+        activity_date: null,
         issue: '',
         resolved_issues: ''
     })
@@ -50,8 +55,10 @@ function VisitHistoryPage() {
     const handleEditClick = (visit) => {
         setSelectedVisit(visit)
         setEditFormData({
+            category: visit.category || '',
+            activity_date: dayjs(visit.activity_date),
             issue: visit.issue || '',
-            resolved_issues: visit.resolved || '' // note: matches your DB field name
+            resolved_issues: visit.resolved || ''
         })
         setEditModalOpen(true)
     }
@@ -59,15 +66,28 @@ function VisitHistoryPage() {
     const handleEditSubmit = async () => {
         try {
             const updateData = {
+                category: editFormData.category,
+                activity_date: editFormData.activity_date.toISOString(),
                 issue: editFormData.issue,
-                resolved_issues: editFormData.resolved_issues
+                resolved: editFormData.resolved_issues
             }
+            
             await api.updateVisit(selectedVisit.id, updateData)
-            const updatedVisits = visits.map(visit => 
-                visit.id === selectedVisit.id 
-                    ? { ...visit, issue: updateData.issue, resolved: updateData.resolved_issues }
-                    : visit
-            )
+            
+            const updatedVisits = visits.map(visit => {
+                if (visit.id === selectedVisit.id) {
+                    return {
+                        ...visit,
+                        category: editFormData.category,
+                        activity_date: editFormData.activity_date.toISOString(),
+                        issue: editFormData.issue,
+                        resolved: editFormData.resolved_issues,
+                        seniors: visit.seniors
+                    }
+                }
+                return visit
+            })
+            
             setVisits(updatedVisits)
             setEditModalOpen(false)
             setSelectedVisit(null)
@@ -171,25 +191,54 @@ function VisitHistoryPage() {
             ) : (
                 <Typography variant="h6">No visits logged.</Typography>
             )}
-            <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)}>
+            <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="md" fullWidth>
                 <DialogTitle>Edit Visit</DialogTitle>
                 <DialogContent>
-                    <Typography variant="body1" sx={{ mt: 2, mb: 2 }}>
-                        Category: {selectedVisit?.category}
-                    </Typography>
                     <TextField
+                        margin="normal"
+                        required
                         fullWidth
-                        label="Issues Identified"
+                        select
+                        label="Type of activity"
+                        value={editFormData.category}
+                        onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                    >
+                        <MenuItem value="Befriending/Welfare check">Befriending/Welfare check</MenuItem>
+                        <MenuItem value="Delivery">Delivery</MenuItem>
+                        <MenuItem value="Housekeeping">Housekeeping</MenuItem>
+                        <MenuItem value="Other">Other</MenuItem>
+                    </TextField>
+                    
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DateTimePicker
+                            label="Date and time of activity"
+                            value={editFormData.activity_date}
+                            onChange={(newValue) => setEditFormData({ ...editFormData, activity_date: newValue })}
+                            required
+                            sx={{ mt: 2 }}
+                        />
+                    </LocalizationProvider>
+
+                    <TextField
+                        margin="normal"
+                        fullWidth
+                        label="Issues identified"
+                        multiline
+                        rows={10}
                         value={editFormData.issue}
                         onChange={(e) => setEditFormData({ ...editFormData, issue: e.target.value })}
-                        margin="normal"
+                        helperText="(Optional) Comment on whether the resident requires additional support, e.g. housekeeping, meal delivery etc."
                     />
+
                     <TextField
+                        margin="normal"
                         fullWidth
-                        label="Issues Resolved"
+                        label="Issues resolved"
+                        multiline
+                        rows={10}
                         value={editFormData.resolved_issues}
                         onChange={(e) => setEditFormData({ ...editFormData, resolved_issues: e.target.value })}
-                        margin="normal"
+                        helperText="(Optional) Comment on whether you resolved any issues or completed any action items mentioned in the care summary."
                     />
                 </DialogContent>
                 <DialogActions>
