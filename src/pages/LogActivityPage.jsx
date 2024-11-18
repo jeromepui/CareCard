@@ -1,4 +1,3 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import {
     Box,
     Button,
@@ -18,6 +17,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import supabase from '../Supabase'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../services/api'
+import BackButton from '../components/BackButton'
+import LoadingState from '../components/LoadingState'
 
 function LogActivityPage() {
     const { id: seniorId } = useParams()
@@ -86,29 +87,10 @@ function LogActivityPage() {
     return (
         <Box sx={{ mt: 4 }}>
             {isLoading ? (
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: '100vh',
-                    }}
-                >
-                    <CircularProgress size={60} />
-                    <Typography variant="h6" sx={{ mt: 2 }}>
-                        Updating care summary...
-                    </Typography>
-                </Box>
+                <LoadingState message="Updating care summary..." />
             ) : (
                 <Box sx={{ mt: 4, mb: 4, overflowY: 'auto' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <ArrowBackIcon
-                            onClick={() => navigate(-1)}
-                            sx={{ mr: 1, cursor: 'pointer' }}
-                        />
-                        <Typography variant="h6">Log Activity</Typography>
-                    </Box>
+                    <BackButton title="Log Activity" />
                     {error && (
                         <Typography color="error" align="center" sx={{ mb: 2 }}>
                             {error}

@@ -1,8 +1,7 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Box, Card, CardContent, Grid2, Typography, Pagination, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, MenuItem } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import LoadingSpinner from '../components/LoadingSpinner'
+import LoadingState from '../components/LoadingState'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../services/api'
 import EditIcon from '@mui/icons-material/Edit'
@@ -11,6 +10,7 @@ import { DateTimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import dayjs from 'dayjs'
+import BackButton from '../components/BackButton'
 
 function VisitHistoryPage() {
     const navigate = useNavigate()
@@ -110,7 +110,7 @@ function VisitHistoryPage() {
     }
 
     if (isLoading) {
-        return <LoadingSpinner />
+        return <LoadingState />
     }
 
     if (error) {
@@ -123,13 +123,7 @@ function VisitHistoryPage() {
 
     return (
         <Box sx={{ mt: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <ArrowBackIcon
-                    onClick={() => navigate('/home')}
-                    sx={{ mr: 1, cursor: 'pointer' }}
-                />
-                <Typography variant="h6">My Visit History</Typography>
-            </Box>
+            <BackButton title="Visit History" />
             {visits.length > 0 ? (
                 <>
                     <Grid2 container>

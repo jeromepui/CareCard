@@ -1,8 +1,8 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Box, Button, Checkbox, FormControlLabel, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import supabase from '../Supabase'
+import BackButton from '../components/BackButton'
 
 function SearchCareCardPage() {
     const [nric, setNric] = useState('')
@@ -41,13 +41,7 @@ function SearchCareCardPage() {
 
     return (
         <Box sx={{ mt: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <ArrowBackIcon
-                    onClick={() => navigate('/home')}
-                    sx={{ mr: 1, cursor: 'pointer' }}
-                />
-                <Typography variant="h6">Enter resident details</Typography>
-            </Box>
+            <BackButton title="Enter resident details" to="/home" />
             <Box component="form" onSubmit={handleSubmit}>
                 <TextField
                     fullWidth

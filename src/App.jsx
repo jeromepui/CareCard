@@ -3,7 +3,7 @@ import { AppBar, Container, IconButton, Toolbar } from '@mui/material'
 import { useCallback, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import carecardLogo from './assets/carecard.svg'
-import LoadingSpinner from './components/LoadingSpinner'
+import LoadingState from './components/LoadingState'
 import NavigationDrawer from './components/NavigationDrawer'
 import { ROUTES } from './constants'
 import { useAuth } from './hooks/useAuth'
@@ -41,7 +41,7 @@ function App() {
     return (
         <>
             {loading ? (
-                <LoadingSpinner />
+                <LoadingState />
             ) : (
                 <>
                     <AppBar position="static" color="primary">

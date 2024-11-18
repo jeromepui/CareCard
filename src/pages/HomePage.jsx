@@ -2,7 +2,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { Box, Card, CardActionArea, CardContent, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import LoadingSpinner from '../components/LoadingSpinner'
+import LoadingState from '../components/LoadingState'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../services/api'
 
@@ -29,7 +29,7 @@ function HomePage() {
     }, [user])
 
     if (isLoading) {
-        return <LoadingSpinner />
+        return <LoadingState />
     }
 
     if (error) {

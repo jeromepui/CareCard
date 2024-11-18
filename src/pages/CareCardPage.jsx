@@ -1,11 +1,11 @@
 import AddIcon from '@mui/icons-material/Add'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import EditIcon from '@mui/icons-material/Edit'
 import { Box, Card, CardContent, Fab, Tab, Tabs, Typography, IconButton, TextField, Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import LoadingSpinner from '../components/LoadingSpinner'
+import LoadingState from '../components/LoadingState'
 import { api } from '../services/api'
+import BackButton from '../components/BackButton'
 
 function CareCardPage() {
     const { id: seniorId } = useParams()
@@ -75,29 +75,21 @@ function CareCardPage() {
     if (error)
         return (
             <Box sx={{ display: 'flex', mt: 4 }}>
-                <ArrowBackIcon
-                    onClick={() => navigate('/search-carecard')}
-                    sx={{ mr: 1, cursor: 'pointer' }}
-                />
+                <BackButton title="Enter resident details" to="/home" />
                 <Typography color="error">{error}</Typography>
             </Box>
         )
 
     if (isLoading) {
-        return <LoadingSpinner />
+        return <LoadingState />
     }
 
     return (
         <Box sx={{ mt: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <ArrowBackIcon
-                    onClick={() => navigate('/search-carecard')}
-                    sx={{ mr: 1, cursor: 'pointer' }}
-                />
-                <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                    {senior.name}&apos;s CareCard
-                </Typography>
-            </Box>
+            <BackButton 
+                title={`${senior.name}'s CareCard`} 
+                to="/search-carecard"
+            />
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Card sx={{ backgroundColor: '#00a17b', color: 'white', mb: 2, width: '100%' }}>
                     <CardContent>
