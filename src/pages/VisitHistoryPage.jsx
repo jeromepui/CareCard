@@ -44,7 +44,6 @@ function VisitHistoryPage() {
                 setVisits(data)
             } catch (err) {
                 setError('Error fetching visit history')
-                console.error('Error fetching visits:', err)
             } finally {
                 setIsLoading(false)
             }
@@ -92,7 +91,6 @@ function VisitHistoryPage() {
             setEditModalOpen(false)
             setSelectedVisit(null)
         } catch (err) {
-            console.error('Error updating visit:', err)
             setError('Error updating visit')
         }
     }
@@ -103,7 +101,6 @@ function VisitHistoryPage() {
                 await api.deleteVisit(visitId)
                 setVisits(visits.filter(visit => visit.id !== visitId))
             } catch (err) {
-                console.error('Error deleting visit:', err)
                 setError('Error deleting visit')
             }
         }

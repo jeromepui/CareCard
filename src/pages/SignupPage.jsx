@@ -53,7 +53,6 @@ function SignupPage() {
             alert('A confirmation link has been sent to your email. Please check your inbox to complete your signup.')
             navigate('/')
         } catch (err) {
-            console.error('Signup error:', err)
             setError(err.message || 'Failed to sign up. Please try again.')
         } finally {
             setIsSubmitting(false)

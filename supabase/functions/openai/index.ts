@@ -24,7 +24,6 @@ async function fetchRecentActivities(seniorId: string) {
     .limit(5)
 
   if (error) {
-    console.error('Error fetching activities:', error)
     return []
   }
 
@@ -49,7 +48,6 @@ const corsHeaders = (origin: string) => {
 
 Deno.serve(async (req) => {
   const origin = req.headers.get('origin') || ''
-  console.log('Request origin:', origin)
 
   if (req.method === 'OPTIONS') {
     const headers = corsHeaders(origin)

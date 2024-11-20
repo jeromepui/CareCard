@@ -44,7 +44,6 @@ function LogActivityPage() {
                 setOrganisation(data.organisation)
             } catch (error) {
                 setError('Error fetching user data')
-                console.error('Error fetching user data:', error)
             }
         }
 
@@ -78,7 +77,6 @@ function LogActivityPage() {
             navigate(`/carecard/${seniorId}`, { state: { showToast: true } })
         } catch (err) {
             setError('Error submitting activity')
-            console.error('Error inserting activity:', err)
         } finally {
             setIsLoading(false)
         }

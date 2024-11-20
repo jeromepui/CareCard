@@ -50,9 +50,9 @@ export function AuthProvider({ children }) {
         signOut: () => supabase.auth.signOut(),
         resetPasswordForEmail: email =>
             supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `https://carecard.vercel.app/reset-password`,
+                redirectTo: `${window.location.origin}/reset-password`,
             }),
-        updatePassword: password =>
+        updatePassword: password => 
             supabase.auth.updateUser({ password }),
         user,
     }

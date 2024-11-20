@@ -19,7 +19,6 @@ function HomePage() {
                 setUsername(name)
             } catch (error) {
                 setError('Error fetching user data')
-                console.error('Error fetching user data:', error)
             } finally {
                 setIsLoading(false)
             }

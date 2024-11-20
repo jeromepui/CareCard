@@ -1,8 +1,9 @@
 import { Box, Button, Container, TextField, Typography } from '@mui/material'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import carecardLogo from '../assets/carecard.svg'
 import { useAuth } from '../hooks/useAuth'
+import supabase from '../Supabase'
 
 function ResetPasswordPage() {
     const [password, setPassword] = useState('')
@@ -11,6 +12,28 @@ function ResetPasswordPage() {
     const [error, setError] = useState('')
     const { updatePassword } = useAuth()
     const navigate = useNavigate()
+
+    useEffect(() => {
+        const verifyToken = async () => {
+            try {
+                const hashParts = window.location.hash.split('=')
+                if (hashParts.length === 2) {
+                    const accessToken = hashParts[1]
+                    const { error } = await supabase.auth.verifyOtp({
+                        token_hash: accessToken,
+                        type: 'recovery'
+                    })
+                    if (error) {
+                        setError('Invalid or expired reset link')
+                    }
+                }
+            } catch (err) {
+                setError('Error processing reset link')
+            }
+        }
+
+        verifyToken()
+    }, [])
 
     const handleSubmit = async e => {
         e.preventDefault()
@@ -21,6 +44,11 @@ function ResetPasswordPage() {
             return
         }
 
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters')
+            return
+        }
+
         setIsSubmitting(true)
 
         try {
@@ -28,9 +56,9 @@ function ResetPasswordPage() {
             if (updateError) throw updateError
             
             alert('Password updated successfully')
+            await supabase.auth.signOut()
             navigate('/')
         } catch (err) {
-            console.error('Password update error:', err)
             setError(err.message || 'Failed to update password')
         } finally {
             setIsSubmitting(false)
@@ -44,7 +72,7 @@ function ResetPasswordPage() {
                 <Typography component="h1" variant="h6" sx={{ mt: 2 }}>
                     Reset Your Password
                 </Typography>
-                <Box component="form" onSubmit={handleSubmit} noValidate>
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
                     <TextField
                         margin="normal"
                         required

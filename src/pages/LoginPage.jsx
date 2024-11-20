@@ -40,10 +40,8 @@ function LoginPage() {
 
             if (error) {
                 setError(error.message || 'Authentication failed. Please try again.')
-                console.error('Auth error:', error)
             }
         } catch (err) {
-            console.error('Unexpected error:', err)
             setError('An unexpected error occurred. Please try again.')
         } finally {
             setIsSubmitting(false)

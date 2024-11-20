@@ -23,7 +23,6 @@ function ForgotPasswordPage() {
             if (resetError) throw resetError
             setEmailSent(true)
         } catch (err) {
-            console.error('Reset password error:', err)
             setError(err.message || 'Failed to send reset password email')
         } finally {
             setIsSubmitting(false)

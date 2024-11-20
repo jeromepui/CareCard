@@ -59,7 +59,6 @@ function CareCardPage() {
                 setOrganisations(orgList)
             } catch (error) {
                 setError('Error fetching data')
-                console.error('Error fetching data:', error)
             } finally {
                 setIsLoading(false)
             }
@@ -154,7 +153,6 @@ function CareCardPage() {
                                                 setCareSummary(tempCareSummary)
                                                 setIsEditing(false)
                                             } catch (error) {
-                                                console.error('Error updating care summary:', error)
                                                 setError('Error updating care summary')
                                             }
                                         }}

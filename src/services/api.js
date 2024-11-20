@@ -1,7 +1,6 @@
 import supabase from '../Supabase'
 
 const handleError = (error, message = 'API Error') => {
-    console.error(`${message}:`, error)
     throw error
 }
 
