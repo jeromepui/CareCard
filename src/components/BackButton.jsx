@@ -1,7 +1,6 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, IconButton } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import PropTypes from 'prop-types'
 
 function BackButton({ title, onBack, to }) {
     const navigate = useNavigate()
@@ -17,11 +16,17 @@ function BackButton({ title, onBack, to }) {
     }
 
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <ArrowBackIcon
+        <Box 
+            component="nav" 
+            sx={{ display: 'flex', alignItems: 'center', mb: 2 }}
+        >
+            <IconButton
                 onClick={handleClick}
-                sx={{ mr: 1, cursor: 'pointer' }}
-            />
+                aria-label={title || "Go back"}
+                sx={{ mr: 1 }}
+            >
+                <ArrowBackIcon />
+            </IconButton>
             {title && <Typography variant="h6">{title}</Typography>}
         </Box>
     )

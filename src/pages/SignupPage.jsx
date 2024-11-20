@@ -34,7 +34,7 @@ function SignupPage() {
                     data: {
                         name: name,
                     },
-                    emailRedirectTo: `https://carecard.vercel.app/home`,
+                    emailRedirectTo: `${window.location.origin}/home`,
                 },
             })
 

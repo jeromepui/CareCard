@@ -33,7 +33,6 @@ async function fetchRecentActivities(seniorId: string) {
 const allowedOrigins = Deno.env.get('ALLOWED_ORIGINS')?.split(',').map(origin => origin.trim())
 
 const corsHeaders = (origin: string) => {
-  // If origin isn't in our allowed list, don't include it in response headers
   if (!allowedOrigins.includes(origin)) {
     return {}
   }
@@ -52,7 +51,7 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     const headers = corsHeaders(origin)
     if (Object.keys(headers).length === 0) {
-      return new Response(null, { status: 403 }) // Forbidden
+      return new Response(null, { status: 403 })
     }
     return new Response(null, {
       status: 204,
