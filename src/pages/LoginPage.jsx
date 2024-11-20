@@ -127,6 +127,15 @@ function LoginPage() {
                                     ? 'Sign in with Magic Link'
                                     : 'Sign in with Password'}
                             </Button>
+                            {loginMethod === 'password' && (
+                                <Button
+                                    fullWidth
+                                    onClick={() => navigate('/forgot-password')}
+                                    sx={{ mb: 2 }}
+                                >
+                                    Forgot Password?
+                                </Button>
+                            )}
                             {error && (
                                 <Typography color="error" align="center" sx={{ mb: 2 }}>
                                     {error}

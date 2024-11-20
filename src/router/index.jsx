@@ -9,6 +9,8 @@ import LoginPage from '../pages/LoginPage'
 import SearchCareCardPage from '../pages/SearchCareCardPage'
 import VisitHistoryPage from '../pages/VisitHistoryPage'
 import SignupPage from '../pages/SignupPage'
+import ForgotPasswordPage from '../pages/ForgotPasswordPage'
+import ResetPasswordPage from '../pages/ResetPasswordPage'
 
 const router = createBrowserRouter([
     {
@@ -22,6 +24,14 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.SIGNUP,
                 element: <SignupPage />,
+            },
+            {
+                path: ROUTES.FORGOT_PASSWORD,
+                element: <ForgotPasswordPage />,
+            },
+            {
+                path: ROUTES.RESET_PASSWORD,
+                element: <ResetPasswordPage />,
             },
             {
                 element: <ProtectedRoute />,

@@ -3,58 +3,35 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import carecardLogo from '../assets/carecard.svg'
 import { useAuth } from '../hooks/useAuth'
-import supabase from '../Supabase'
 
-function SignupPage() {
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
+function ResetPasswordPage() {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState('')
-    const { signUp } = useAuth()
+    const { updatePassword } = useAuth()
     const navigate = useNavigate()
 
     const handleSubmit = async e => {
         e.preventDefault()
         setError('')
-        
+
         if (password !== confirmPassword) {
             setError('Passwords do not match')
             return
         }
-        
+
         setIsSubmitting(true)
 
         try {
-            const { data: authData, error: authError } = await signUp({
-                email,
-                password,
-                options: {
-                    data: {
-                        name: name,
-                    },
-                    emailRedirectTo: `https://carecard.vercel.app/home`,
-                },
-            })
-
-            if (authError) throw authError
-
-            const { error: dbError } = await supabase.from('volunteers').insert([
-                {
-                    name,
-                    email,
-                    auth_id: authData.user.id,
-                },
-            ])
-
-            if (dbError) throw dbError
-
-            alert('A confirmation link has been sent to your email. Please check your inbox to complete your signup.')
+            const { error: updateError } = await updatePassword(password)
+            if (updateError) throw updateError
+            
+            alert('Password updated successfully')
             navigate('/')
         } catch (err) {
-            console.error('Signup error:', err)
-            setError(err.message || 'Failed to sign up. Please try again.')
+            console.error('Password update error:', err)
+            setError(err.message || 'Failed to update password')
         } finally {
             setIsSubmitting(false)
         }
@@ -65,40 +42,15 @@ function SignupPage() {
             <Box sx={{ mt: 4, display: 'flex', flexDirection: 'column' }}>
                 <img src={carecardLogo} alt="CareCard Logo" style={{ borderRadius: '16px' }} />
                 <Typography component="h1" variant="h6" sx={{ mt: 2 }}>
-                    Sign up for CareCard
+                    Reset Your Password
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} noValidate>
                     <TextField
                         margin="normal"
                         required
                         fullWidth
-                        id="name"
-                        label="Full Name"
-                        name="name"
-                        autoComplete="name"
-                        autoFocus
-                        value={name}
-                        onChange={e => setName(e.target.value)}
-                        disabled={isSubmitting}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        disabled={isSubmitting}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
                         name="password"
-                        label="Password"
+                        label="New Password"
                         type="password"
                         id="password"
                         autoComplete="new-password"
@@ -111,7 +63,7 @@ function SignupPage() {
                         required
                         fullWidth
                         name="confirmPassword"
-                        label="Confirm Password"
+                        label="Confirm New Password"
                         type="password"
                         id="confirmPassword"
                         autoComplete="new-password"
@@ -124,22 +76,19 @@ function SignupPage() {
                         fullWidth
                         variant="contained"
                         sx={{ mt: 2, mb: 2 }}
-                        disabled={isSubmitting || !name || !email || !password || !confirmPassword}
+                        disabled={isSubmitting}
                     >
-                        {isSubmitting ? 'Signing up...' : 'Sign Up'}
+                        {isSubmitting ? 'Updating...' : 'Update Password'}
                     </Button>
                     {error && (
                         <Typography color="error" align="center" sx={{ mb: 2 }}>
                             {error}
                         </Typography>
                     )}
-                    <Button fullWidth onClick={() => navigate('/')} sx={{ textTransform: 'none' }}>
-                        Already have an account? Sign in
-                    </Button>
                 </Box>
             </Box>
         </Container>
     )
 }
 
-export default SignupPage
+export default ResetPasswordPage 

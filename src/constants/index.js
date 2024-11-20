@@ -13,4 +13,6 @@ export const ROUTES = {
     VISIT_HISTORY: '/visit-history',
     CARECARD: '/carecard/:id',
     LOG_ACTIVITY: '/log-activity/:id',
+    FORGOT_PASSWORD: '/forgot-password',
+    RESET_PASSWORD: '/reset-password',
 }

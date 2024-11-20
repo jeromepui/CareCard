@@ -24,7 +24,12 @@ function App() {
     }
 
     const isPublicRoute = useCallback(() => {
-        return location.pathname === ROUTES.LOGIN || location.pathname === ROUTES.SIGNUP
+        return (
+            location.pathname === ROUTES.LOGIN ||
+            location.pathname === ROUTES.SIGNUP ||
+            location.pathname === ROUTES.FORGOT_PASSWORD ||
+            location.pathname === ROUTES.RESET_PASSWORD
+        )
     }, [location.pathname])
 
     useEffect(() => {
