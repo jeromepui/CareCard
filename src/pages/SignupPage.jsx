@@ -18,12 +18,12 @@ function SignupPage() {
     const handleSubmit = async e => {
         e.preventDefault()
         setError('')
-        
+
         if (password !== confirmPassword) {
             setError('Passwords do not match')
             return
         }
-        
+
         setIsSubmitting(true)
 
         try {
@@ -50,10 +50,12 @@ function SignupPage() {
 
             if (dbError) throw dbError
 
-            alert('A confirmation link has been sent to your email. Please check your inbox to complete your signup.')
+            alert(
+                'A confirmation link has been sent to your email. Please check your inbox to complete your signup.'
+            )
             navigate('/')
-        } catch (err) {
-            setError(err.message || 'Failed to sign up. Please try again.')
+        } catch (error) {
+            setError(error.message || 'Failed to sign up. Please try again.')
         } finally {
             setIsSubmitting(false)
         }

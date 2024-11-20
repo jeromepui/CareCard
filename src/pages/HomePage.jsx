@@ -18,6 +18,7 @@ function HomePage() {
                 const name = await api.fetchUserName(user.email)
                 setUsername(name)
             } catch (error) {
+                console.error('Error fetching user data:', error)
                 setError('Error fetching user data')
             } finally {
                 setIsLoading(false)

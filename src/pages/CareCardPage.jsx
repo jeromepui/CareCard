@@ -1,6 +1,16 @@
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
-import { Box, Card, CardContent, Fab, Tab, Tabs, Typography, IconButton, TextField, Button } from '@mui/material'
+import {
+    Box,
+    Card,
+    CardContent,
+    Fab,
+    Tab,
+    Tabs,
+    Typography,
+    TextField,
+    Button,
+} from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import LoadingState from '../components/LoadingState'
@@ -58,6 +68,7 @@ function CareCardPage() {
 
                 setOrganisations(orgList)
             } catch (error) {
+                console.error('Error fetching data:', error)
                 setError('Error fetching data')
             } finally {
                 setIsLoading(false)
@@ -85,10 +96,7 @@ function CareCardPage() {
 
     return (
         <Box sx={{ mt: 4 }}>
-            <BackButton 
-                title={`${senior.name}'s CareCard`} 
-                to="/search-carecard"
-            />
+            <BackButton title={`${senior.name}'s CareCard`} to="/search-carecard" />
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Card sx={{ backgroundColor: '#00a17b', color: 'white', mb: 2, width: '100%' }}>
                     <CardContent>
@@ -109,7 +117,13 @@ function CareCardPage() {
                 {activeTab === 0 && (
                     <Card sx={{ width: '100%', mt: 2 }}>
                         <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
                                 <Typography variant="h6">Care Summary</Typography>
                                 <Button
                                     startIcon={<EditIcon />}
@@ -127,7 +141,7 @@ function CareCardPage() {
                                     multiline
                                     minRows={4}
                                     value={tempCareSummary}
-                                    onChange={(e) => setTempCareSummary(e.target.value)}
+                                    onChange={e => setTempCareSummary(e.target.value)}
                                     sx={{ mt: 2 }}
                                 />
                             ) : (
@@ -143,16 +157,27 @@ function CareCardPage() {
                                 </Typography>
                             )}
                             {isEditing && (
-                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'flex-end',
+                                        gap: 1,
+                                        mt: 2,
+                                    }}
+                                >
                                     <Button
                                         variant="contained"
                                         color="primary"
                                         onClick={async () => {
                                             try {
-                                                await api.updateCareSummary(seniorId, tempCareSummary)
+                                                await api.updateCareSummary(
+                                                    seniorId,
+                                                    tempCareSummary
+                                                )
                                                 setCareSummary(tempCareSummary)
                                                 setIsEditing(false)
                                             } catch (error) {
+                                                console.error('Error updating care summary:', error)
                                                 setError('Error updating care summary')
                                             }
                                         }}

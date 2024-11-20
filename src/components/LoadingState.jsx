@@ -1,10 +1,7 @@
 import { Box, CircularProgress, Typography } from '@mui/material'
+import PropTypes from 'prop-types'
 
-function LoadingState({ 
-    message = 'Loading...', 
-    height = '100vh',
-    size = 60 
-}) {
+function LoadingState({ message = 'Loading...', height = '100vh', size = 60 }) {
     return (
         <Box
             role="status"
@@ -17,10 +14,7 @@ function LoadingState({
                 height,
             }}
         >
-            <CircularProgress 
-                size={size}
-                aria-label="Loading indicator" 
-            />
+            <CircularProgress size={size} aria-label="Loading indicator" />
             <Typography variant="h6" sx={{ mt: 2 }}>
                 {message}
             </Typography>
@@ -28,4 +22,10 @@ function LoadingState({
     )
 }
 
-export default LoadingState 
+LoadingState.propTypes = {
+    message: PropTypes.string,
+    height: PropTypes.string,
+    size: PropTypes.number,
+}
+
+export default LoadingState

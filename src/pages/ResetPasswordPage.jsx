@@ -21,13 +21,14 @@ function ResetPasswordPage() {
                     const accessToken = hashParts[1]
                     const { error } = await supabase.auth.verifyOtp({
                         token_hash: accessToken,
-                        type: 'recovery'
+                        type: 'recovery',
                     })
                     if (error) {
                         setError('Invalid or expired reset link')
                     }
                 }
-            } catch (err) {
+            } catch (error) {
+                console.error('Error processing reset link:', error)
                 setError('Error processing reset link')
             }
         }
@@ -54,12 +55,12 @@ function ResetPasswordPage() {
         try {
             const { error: updateError } = await updatePassword(password)
             if (updateError) throw updateError
-            
+
             alert('Password updated successfully')
             await supabase.auth.signOut()
             navigate('/')
-        } catch (err) {
-            setError(err.message || 'Failed to update password')
+        } catch (error) {
+            setError(error.message || 'Failed to update password')
         } finally {
             setIsSubmitting(false)
         }
@@ -72,7 +73,12 @@ function ResetPasswordPage() {
                 <Typography component="h1" variant="h6" sx={{ mt: 2 }}>
                     Reset Your Password
                 </Typography>
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
+                <Box
+                    component="form"
+                    onSubmit={handleSubmit}
+                    noValidate
+                    sx={{ mt: 1, width: '100%' }}
+                >
                     <TextField
                         margin="normal"
                         required
@@ -119,4 +125,4 @@ function ResetPasswordPage() {
     )
 }
 
-export default ResetPasswordPage 
+export default ResetPasswordPage

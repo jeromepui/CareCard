@@ -1,6 +1,7 @@
 import supabase from '../Supabase'
 
 const handleError = (error, message = 'API Error') => {
+    console.error(message, error)
     throw error
 }
 
@@ -17,7 +18,8 @@ export const api = {
 
             const { data, error } = await supabase
                 .from('activities')
-                .select(`
+                .select(
+                    `
                     id, 
                     volunteer_id, 
                     category, 
@@ -26,14 +28,15 @@ export const api = {
                     activity_date, 
                     created_at,
                     seniors (id, name)
-                `)
+                `
+                )
                 .eq('volunteer_id', volunteerData.id)
                 .order('created_at', { ascending: false })
 
             if (error) handleError(error, 'Error fetching activities')
             return data
-        } catch (err) {
-            handleError(err, 'Error in fetchVisits')
+        } catch (error) {
+            handleError(error, 'Error in fetchVisits')
         }
     },
 
@@ -41,7 +44,8 @@ export const api = {
         try {
             const { data, error } = await supabase
                 .from('volunteers')
-                .select(`
+                .select(
+                    `
                     id,
                     name,
                     email,
@@ -50,12 +54,13 @@ export const api = {
                         name,
                         contact_info
                     )
-                `)
+                `
+                )
                 .eq('email', email)
                 .single()
 
             if (error) handleError(error, 'Error fetching user data')
-            
+
             return {
                 id: data.id,
                 name: data.name,
@@ -64,23 +69,19 @@ export const api = {
                 organisation: data.organisations?.name || '',
                 organisation_contact: data.organisations?.contact_info || '',
             }
-        } catch (err) {
-            handleError(err, 'Error in fetchUserData')
+        } catch (error) {
+            handleError(error, 'Error in fetchUserData')
         }
     },
 
     async fetchSeniorData(id) {
         try {
-            const { data, error } = await supabase
-                .from('seniors')
-                .select('*')
-                .eq('id', id)
-                .single()
+            const { data, error } = await supabase.from('seniors').select('*').eq('id', id).single()
 
             if (error) handleError(error, 'Error fetching senior data')
             return data
-        } catch (err) {
-            handleError(err, 'Error in fetchSeniorData')
+        } catch (error) {
+            handleError(error, 'Error in fetchSeniorData')
         }
     },
 
@@ -94,8 +95,8 @@ export const api = {
 
             if (error) handleError(error, 'Error fetching care summary')
             return data.response
-        } catch (err) {
-            handleError(err, 'Error in fetchCareSummary')
+        } catch (error) {
+            handleError(error, 'Error in fetchCareSummary')
         }
     },
 
@@ -103,7 +104,8 @@ export const api = {
         try {
             const { data, error } = await supabase
                 .from('activities')
-                .select(`
+                .select(
+                    `
                     id,
                     category,
                     activity_date,
@@ -115,7 +117,8 @@ export const api = {
                             name
                         )
                     )
-                `)
+                `
+                )
                 .eq('senior_id', id)
                 .order('activity_date', { ascending: false })
                 .limit(10)
@@ -137,8 +140,8 @@ export const api = {
                       }
                     : null,
             }))
-        } catch (err) {
-            handleError(err, 'Error in fetchRecentVisits')
+        } catch (error) {
+            handleError(error, 'Error in fetchRecentVisits')
         }
     },
 
@@ -146,7 +149,8 @@ export const api = {
         try {
             const { data, error } = await supabase
                 .from('activities')
-                .select(`
+                .select(
+                    `
                     category,
                     volunteers (
                         organisation_id,
@@ -155,13 +159,14 @@ export const api = {
                             contact_info
                         )
                     )
-                `)
+                `
+                )
                 .eq('senior_id', id)
-            
+
             if (error) handleError(error, 'Error fetching organisations')
             return data
-        } catch (err) {
-            handleError(err, 'Error in fetchOrganisations')
+        } catch (error) {
+            handleError(error, 'Error in fetchOrganisations')
         }
     },
 
@@ -172,11 +177,11 @@ export const api = {
                 .select('name')
                 .eq('email', userEmail)
                 .single()
-            
+
             if (error) handleError(error, 'Error fetching user name')
             return data.name
-        } catch (err) {
-            handleError(err, 'Error in fetchUserName')
+        } catch (error) {
+            handleError(error, 'Error in fetchUserName')
         }
     },
 
@@ -184,17 +189,17 @@ export const api = {
         try {
             const { data, error } = await supabase
                 .from('care_summary')
-                .update({ 
+                .update({
                     response: summary,
-                    updated_at: new Date().toISOString()
+                    updated_at: new Date().toISOString(),
                 })
                 .eq('senior_id', seniorId)
                 .select()
 
             if (error) handleError(error, 'Error updating care summary')
             return data
-        } catch (err) {
-            handleError(err, 'Error in updateCareSummary')
+        } catch (error) {
+            handleError(error, 'Error in updateCareSummary')
         }
     },
 
@@ -206,29 +211,26 @@ export const api = {
                     category: updateData.category,
                     activity_date: updateData.activity_date,
                     issue: updateData.issue,
-                    resolved: updateData.resolved
+                    resolved: updateData.resolved,
                 })
                 .eq('id', visitId)
                 .select()
 
             if (error) handleError(error, 'Error updating visit')
             return data
-        } catch (err) {
-            handleError(err, 'Error in updateVisit')
+        } catch (error) {
+            handleError(error, 'Error in updateVisit')
         }
     },
 
     async deleteVisit(visitId) {
         try {
-            const { error } = await supabase
-                .from('activities')
-                .delete()
-                .eq('id', visitId)
+            const { error } = await supabase.from('activities').delete().eq('id', visitId)
 
             if (error) handleError(error, 'Error deleting visit')
             return { success: true }
-        } catch (err) {
-            handleError(err, 'Error in deleteVisit')
+        } catch (error) {
+            handleError(error, 'Error in deleteVisit')
         }
-    }
+    },
 }

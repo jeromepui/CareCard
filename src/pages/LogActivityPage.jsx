@@ -2,7 +2,6 @@ import {
     Box,
     Button,
     Checkbox,
-    CircularProgress,
     FormControlLabel,
     MenuItem,
     TextField,
@@ -43,6 +42,7 @@ function LogActivityPage() {
                 setName(data.name)
                 setOrganisation(data.organisation)
             } catch (error) {
+                console.error('Error fetching user data:', error)
                 setError('Error fetching user data')
             }
         }
@@ -68,14 +68,15 @@ function LogActivityPage() {
 
             if (submitError) throw submitError
 
-            const { data, error: functionError } = await supabase.functions.invoke('openai', {
+            const { error: functionError } = await supabase.functions.invoke('openai', {
                 body: { senior_id: seniorId },
             })
-            
+
             if (functionError) throw functionError
 
             navigate(`/carecard/${seniorId}`, { state: { showToast: true } })
-        } catch (err) {
+        } catch (error) {
+            console.error('Error submitting activity:', error)
             setError('Error submitting activity')
         } finally {
             setIsLoading(false)

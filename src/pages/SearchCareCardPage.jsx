@@ -22,9 +22,7 @@ function SearchCareCardPage() {
             return
         }
 
-        let query = supabase
-            .from('seniors')
-            .select('id')
+        let query = supabase.from('seniors').select('id')
 
         if (nric) query = query.eq('last_four_char_NRIC', nric.toUpperCase())
         if (postalCode) query = query.eq('postal_code', postalCode)

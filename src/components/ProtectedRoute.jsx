@@ -6,7 +6,7 @@ import LoadingState from './LoadingState'
 function ProtectedRoute() {
     const { user, isLoading } = useAuth()
     const location = useLocation()
-    
+
     if (isLoading) {
         return <LoadingState />
     }

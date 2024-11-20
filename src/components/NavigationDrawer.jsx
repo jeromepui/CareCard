@@ -1,13 +1,14 @@
+import PropTypes from 'prop-types'
 import HomeIcon from '@mui/icons-material/Home'
 import LogoutIcon from '@mui/icons-material/Logout'
-import { 
-    Divider, 
-    Drawer, 
-    List, 
-    ListItem, 
-    ListItemIcon, 
+import {
+    Divider,
+    Drawer,
+    List,
+    ListItem,
+    ListItemIcon,
     ListItemText,
-    ListItemButton 
+    ListItemButton,
 } from '@mui/material'
 import { Link } from 'react-router-dom'
 
@@ -23,19 +24,19 @@ function NavigationDrawer({ isOpen, onClose, onSignOut }) {
             text: 'Home',
             to: '/home',
             onClick: onClose,
-            divider: true
+            divider: true,
         },
         {
             icon: <LogoutIcon />,
             text: 'Sign Out',
-            onClick: handleSignOut
-        }
+            onClick: handleSignOut,
+        },
     ]
 
     return (
-        <Drawer 
-            anchor="right" 
-            open={isOpen} 
+        <Drawer
+            anchor="right"
+            open={isOpen}
             onClose={onClose}
             role="navigation"
             aria-label="Main navigation"
@@ -59,6 +60,12 @@ function NavigationDrawer({ isOpen, onClose, onSignOut }) {
             </List>
         </Drawer>
     )
+}
+
+NavigationDrawer.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onSignOut: PropTypes.func.isRequired,
 }
 
 export default NavigationDrawer

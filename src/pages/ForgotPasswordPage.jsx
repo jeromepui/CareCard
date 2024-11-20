@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import carecardLogo from '../assets/carecard.svg'
 import { useAuth } from '../hooks/useAuth'
-import BackButton from '../components/BackButton'
 
 function ForgotPasswordPage() {
     const [email, setEmail] = useState('')
@@ -22,8 +21,8 @@ function ForgotPasswordPage() {
             const { error: resetError } = await resetPasswordForEmail(email)
             if (resetError) throw resetError
             setEmailSent(true)
-        } catch (err) {
-            setError(err.message || 'Failed to send reset password email')
+        } catch (error) {
+            setError(error.message || 'Failed to send reset password email')
         } finally {
             setIsSubmitting(false)
         }
@@ -41,11 +40,7 @@ function ForgotPasswordPage() {
                         <Typography color="text.secondary">
                             We sent a password reset link to <strong>{email}</strong>
                         </Typography>
-                        <Button
-                            fullWidth
-                            onClick={() => navigate('/')}
-                            sx={{ mt: 2 }}
-                        >
+                        <Button fullWidth onClick={() => navigate('/')} sx={{ mt: 2 }}>
                             Return to Login
                         </Button>
                     </Box>
@@ -97,4 +92,4 @@ function ForgotPasswordPage() {
     )
 }
 
-export default ForgotPasswordPage 
+export default ForgotPasswordPage

@@ -1,6 +1,20 @@
-import { Box, Card, CardContent, Grid2, Typography, Pagination, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, MenuItem } from '@mui/material'
+import {
+    Box,
+    Card,
+    CardContent,
+    Grid2,
+    Typography,
+    Pagination,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    IconButton,
+    MenuItem,
+} from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import LoadingState from '../components/LoadingState'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../services/api'
@@ -13,7 +27,6 @@ import dayjs from 'dayjs'
 import BackButton from '../components/BackButton'
 
 function VisitHistoryPage() {
-    const navigate = useNavigate()
     const [visits, setVisits] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -26,9 +39,9 @@ function VisitHistoryPage() {
         category: '',
         activity_date: null,
         issue: '',
-        resolved_issues: ''
+        resolved_issues: '',
     })
-    
+
     const totalPages = Math.ceil(visits.length / itemsPerPage)
     const startIndex = (page - 1) * itemsPerPage
     const paginatedVisits = visits.slice(startIndex, startIndex + itemsPerPage)
@@ -42,7 +55,8 @@ function VisitHistoryPage() {
             try {
                 const data = await api.fetchVisits(user.email)
                 setVisits(data)
-            } catch (err) {
+            } catch (error) {
+                console.error('Error fetching visit history:', error)
                 setError('Error fetching visit history')
             } finally {
                 setIsLoading(false)
@@ -51,13 +65,13 @@ function VisitHistoryPage() {
         fetchData()
     }, [user])
 
-    const handleEditClick = (visit) => {
+    const handleEditClick = visit => {
         setSelectedVisit(visit)
         setEditFormData({
             category: visit.category || '',
             activity_date: dayjs(visit.activity_date),
             issue: visit.issue || '',
-            resolved_issues: visit.resolved || ''
+            resolved_issues: visit.resolved || '',
         })
         setEditModalOpen(true)
     }
@@ -68,11 +82,11 @@ function VisitHistoryPage() {
                 category: editFormData.category,
                 activity_date: editFormData.activity_date.toISOString(),
                 issue: editFormData.issue,
-                resolved: editFormData.resolved_issues
+                resolved: editFormData.resolved_issues,
             }
-            
+
             await api.updateVisit(selectedVisit.id, updateData)
-            
+
             const updatedVisits = visits.map(visit => {
                 if (visit.id === selectedVisit.id) {
                     return {
@@ -81,26 +95,28 @@ function VisitHistoryPage() {
                         activity_date: editFormData.activity_date.toISOString(),
                         issue: editFormData.issue,
                         resolved: editFormData.resolved_issues,
-                        seniors: visit.seniors
+                        seniors: visit.seniors,
                     }
                 }
                 return visit
             })
-            
+
             setVisits(updatedVisits)
             setEditModalOpen(false)
             setSelectedVisit(null)
-        } catch (err) {
+        } catch (error) {
+            console.error('Error updating visit:', error)
             setError('Error updating visit')
         }
     }
 
-    const handleDelete = async (visitId) => {
+    const handleDelete = async visitId => {
         if (window.confirm('Are you sure you want to delete this visit?')) {
             try {
                 await api.deleteVisit(visitId)
                 setVisits(visits.filter(visit => visit.id !== visitId))
-            } catch (err) {
+            } catch (error) {
+                console.error('Error deleting visit:', error)
                 setError('Error deleting visit')
             }
         }
@@ -128,9 +144,17 @@ function VisitHistoryPage() {
                             <Grid2 size={12} key={visit.id} sx={{ mb: 1 }}>
                                 <Card>
                                     <CardContent>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'flex-start',
+                                            }}
+                                        >
                                             <Box>
-                                                <Typography variant="h6">{visit.seniors.name}</Typography>
+                                                <Typography variant="h6">
+                                                    {visit.seniors.name}
+                                                </Typography>
                                                 <Typography variant="body1">
                                                     Category: {visit.category}
                                                 </Typography>
@@ -141,19 +165,22 @@ function VisitHistoryPage() {
                                                     Issues Resolved: {visit.resolved || 'NA'}
                                                 </Typography>
                                                 <Typography variant="body2" color="textSecondary">
-                                                    Date: {new Date(visit.activity_date).toLocaleDateString()}
+                                                    Date:{' '}
+                                                    {new Date(
+                                                        visit.activity_date
+                                                    ).toLocaleDateString()}
                                                 </Typography>
                                             </Box>
                                             <Box sx={{ display: 'flex', gap: 1 }}>
-                                                <IconButton 
-                                                    onClick={() => handleEditClick(visit)} 
+                                                <IconButton
+                                                    onClick={() => handleEditClick(visit)}
                                                     size="small"
                                                     sx={{ padding: '4px' }}
                                                 >
                                                     <EditIcon fontSize="small" />
                                                 </IconButton>
-                                                <IconButton 
-                                                    onClick={() => handleDelete(visit.id)} 
+                                                <IconButton
+                                                    onClick={() => handleDelete(visit.id)}
                                                     size="small"
                                                     color="error"
                                                     sx={{ padding: '4px' }}
@@ -167,10 +194,10 @@ function VisitHistoryPage() {
                             </Grid2>
                         ))}
                     </Grid2>
-                    
+
                     {totalPages > 1 && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, mb: 3 }}>
-                            <Pagination 
+                            <Pagination
                                 count={totalPages}
                                 page={page}
                                 onChange={handlePageChange}
@@ -182,7 +209,12 @@ function VisitHistoryPage() {
             ) : (
                 <Typography variant="h6">No visits logged.</Typography>
             )}
-            <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="md" fullWidth>
+            <Dialog
+                open={editModalOpen}
+                onClose={() => setEditModalOpen(false)}
+                maxWidth="md"
+                fullWidth
+            >
                 <DialogTitle>Edit Visit</DialogTitle>
                 <DialogContent>
                     <TextField
@@ -192,19 +224,25 @@ function VisitHistoryPage() {
                         select
                         label="Type of activity"
                         value={editFormData.category}
-                        onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                        onChange={e =>
+                            setEditFormData({ ...editFormData, category: e.target.value })
+                        }
                     >
-                        <MenuItem value="Befriending/Welfare check">Befriending/Welfare check</MenuItem>
+                        <MenuItem value="Befriending/Welfare check">
+                            Befriending/Welfare check
+                        </MenuItem>
                         <MenuItem value="Delivery">Delivery</MenuItem>
                         <MenuItem value="Housekeeping">Housekeeping</MenuItem>
                         <MenuItem value="Other">Other</MenuItem>
                     </TextField>
-                    
+
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DateTimePicker
                             label="Date and time of activity"
                             value={editFormData.activity_date}
-                            onChange={(newValue) => setEditFormData({ ...editFormData, activity_date: newValue })}
+                            onChange={newValue =>
+                                setEditFormData({ ...editFormData, activity_date: newValue })
+                            }
                             required
                             sx={{ mt: 2 }}
                         />
@@ -217,7 +255,7 @@ function VisitHistoryPage() {
                         multiline
                         rows={10}
                         value={editFormData.issue}
-                        onChange={(e) => setEditFormData({ ...editFormData, issue: e.target.value })}
+                        onChange={e => setEditFormData({ ...editFormData, issue: e.target.value })}
                         helperText="(Optional) Comment on whether the resident requires additional support, e.g. housekeeping, meal delivery etc."
                     />
 
@@ -228,7 +266,9 @@ function VisitHistoryPage() {
                         multiline
                         rows={10}
                         value={editFormData.resolved_issues}
-                        onChange={(e) => setEditFormData({ ...editFormData, resolved_issues: e.target.value })}
+                        onChange={e =>
+                            setEditFormData({ ...editFormData, resolved_issues: e.target.value })
+                        }
                         helperText="(Optional) Comment on whether you resolved any issues or completed any action items mentioned in the care summary."
                     />
                 </DialogContent>
