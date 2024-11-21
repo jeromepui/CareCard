@@ -216,7 +216,7 @@ function CareCardPage() {
                                             <strong>Issue:</strong> {visit.issue}
                                         </Typography>
                                         <Typography>
-                                            <strong>Volunteer:</strong>{' '}
+                                            <strong>Care Provider:</strong>{' '}
                                             {visit.volunteer ? visit.volunteer.name : 'N/A'}
                                         </Typography>
                                         <Typography>
