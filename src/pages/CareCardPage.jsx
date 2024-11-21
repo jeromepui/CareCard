@@ -209,10 +209,18 @@ function CareCardPage() {
                                         <Typography variant="h6">
                                             {new Date(visit.activity_date).toLocaleDateString()}
                                         </Typography>
-                                        <Typography>Category: {visit.category}</Typography>
-                                        <Typography>Issue: {visit.issue}</Typography>
                                         <Typography>
-                                            Organisation:{' '}
+                                            <strong>Category:</strong> {visit.category}
+                                        </Typography>
+                                        <Typography>
+                                            <strong>Issue:</strong> {visit.issue}
+                                        </Typography>
+                                        <Typography>
+                                            <strong>Volunteer:</strong>{' '}
+                                            {visit.volunteer ? visit.volunteer.name : 'N/A'}
+                                        </Typography>
+                                        <Typography>
+                                            <strong>Organisation:</strong>{' '}
                                             {visit.volunteer ? visit.volunteer.organisation : 'N/A'}
                                         </Typography>
                                     </CardContent>
