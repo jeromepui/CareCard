@@ -39,7 +39,6 @@ function VisitHistoryPage() {
         category: '',
         activity_date: null,
         issue: '',
-        resolved_issues: '',
     })
 
     const totalPages = Math.ceil(visits.length / itemsPerPage)
@@ -71,7 +70,6 @@ function VisitHistoryPage() {
             category: visit.category || '',
             activity_date: dayjs(visit.activity_date),
             issue: visit.issue || '',
-            resolved_issues: visit.resolved || '',
         })
         setEditModalOpen(true)
     }
@@ -82,7 +80,6 @@ function VisitHistoryPage() {
                 category: editFormData.category,
                 activity_date: editFormData.activity_date.toISOString(),
                 issue: editFormData.issue,
-                resolved: editFormData.resolved_issues,
             }
 
             await api.updateVisit(selectedVisit.id, updateData)
@@ -94,7 +91,6 @@ function VisitHistoryPage() {
                         category: editFormData.category,
                         activity_date: editFormData.activity_date.toISOString(),
                         issue: editFormData.issue,
-                        resolved: editFormData.resolved_issues,
                         seniors: visit.seniors,
                     }
                 }
@@ -159,10 +155,7 @@ function VisitHistoryPage() {
                                                     Category: {visit.category}
                                                 </Typography>
                                                 <Typography variant="body1">
-                                                    Issues Identified: {visit.issue || 'NA'}
-                                                </Typography>
-                                                <Typography variant="body1">
-                                                    Issues Resolved: {visit.resolved || 'NA'}
+                                                    Issue: {visit.issue || 'NA'}
                                                 </Typography>
                                                 <Typography variant="body2" color="textSecondary">
                                                     Date:{' '}
@@ -257,19 +250,6 @@ function VisitHistoryPage() {
                         value={editFormData.issue}
                         onChange={e => setEditFormData({ ...editFormData, issue: e.target.value })}
                         helperText="(Optional) Comment on whether the resident requires additional support, e.g. housekeeping, meal delivery etc."
-                    />
-
-                    <TextField
-                        margin="normal"
-                        fullWidth
-                        label="Issues resolved"
-                        multiline
-                        rows={10}
-                        value={editFormData.resolved_issues}
-                        onChange={e =>
-                            setEditFormData({ ...editFormData, resolved_issues: e.target.value })
-                        }
-                        helperText="(Optional) Comment on whether you resolved any issues or completed any action items mentioned in the care summary."
                     />
                 </DialogContent>
                 <DialogActions>

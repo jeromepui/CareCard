@@ -29,7 +29,6 @@ function LogActivityPage() {
     const [category, setCategory] = useState('')
     const [activityDate, setActivityDate] = useState(dayjs())
     const [issuesIdentified, setIssuesIdentified] = useState('')
-    const [issuesResolved, setIssuesResolved] = useState('')
     const [consentGiven, setConsentGiven] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -62,7 +61,6 @@ function LogActivityPage() {
                     category: category,
                     activity_date: activityDate.toISOString(),
                     issue: issuesIdentified,
-                    resolved: issuesResolved,
                 },
             ])
 
@@ -151,18 +149,6 @@ function LogActivityPage() {
                             value={issuesIdentified}
                             onChange={e => setIssuesIdentified(e.target.value)}
                             helperText="(Optional) Comment on whether the resident requires additional support, e.g. housekeeping, meal delivery etc."
-                        />
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            id="issuesResolved"
-                            label="Issues resolved"
-                            name="issuesResolved"
-                            multiline
-                            rows={10}
-                            value={issuesResolved}
-                            onChange={e => setIssuesResolved(e.target.value)}
-                            helperText="(Optional) Comment on whether you resolved any issues or completed any action items mentioned in the care summary."
                         />
                         <FormControlLabel
                             control={

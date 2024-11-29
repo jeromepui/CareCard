@@ -91,47 +91,35 @@ Deno.serve(async (req) => {
       }`)
       .join('\n')
 
-    const issuesResolvedPrompt = sortedActivities
-      .map(a => `- ${new Date(a.activity_date).toLocaleDateString()} (${a.category}): ${
-        a.resolved ? a.resolved : 'No issues resolved'
-      }`)
-      .join('\n')
-
     const prompt = `Analyze care visit records and create a care summary.
 
                 VISIT RECORDS (oldest to newest):
                 Issues identified:
                 ${issuesIdentifiedPrompt}
 
-                Issues resolved:
-                ${issuesResolvedPrompt}
-
                 TASK 1 - SUMMARIZE VISITS:
                 For each visit date, write:
-                "Issues identified: [findings/None]. Issues resolved: [resolutions/None]."
+                "Issues identified: [findings/None]."
 
                 TASK 2 - CREATE ACTION ITEMS:
                 1. List all identified issues
-                2. Remove any issues that were later resolved (including related issues)
-                3. Convert remaining issues into clear instructions
+                2. Convert issues into clear instructions
 
                 Example output:
                 Recent visits summary:
-                - 1/1/24: Issues identified: Needs walker for mobility. Issues resolved: None.
-                - 1/5/24: Issues identified: None. Issues resolved: Provided walker, mobility improved.
-                - 1/8/24: Issues identified: Feeling lonely. Issues resolved: None.
+                - 1/1/24: Issues identified: Needs walker for mobility.
+                - 1/8/24: Issues identified: Feeling lonely.
 
                 Action items:
+                - Provide walker for mobility support
                 - Connect resident with social activities to address loneliness
-
-                Note: "Needs walker" was removed from action items as it was resolved on 1/5.
 
                 YOUR RESPONSE MUST FOLLOW THIS FORMAT:
                 Recent visits summary:
-                - [Date]: Issues identified: [findings/None]. Issues resolved: [resolutions/None].
+                - [Date]: Issues identified: [findings/None].
 
                 Action items:
-                - [Instructions for unresolved issues]
+                - [Instructions for issues]
                 OR
                 - No outstanding action items`
 

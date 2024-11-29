@@ -211,7 +211,6 @@ export const api = {
                     category: updateData.category,
                     activity_date: updateData.activity_date,
                     issue: updateData.issue,
-                    resolved: updateData.resolved,
                 })
                 .eq('id', visitId)
                 .select()
